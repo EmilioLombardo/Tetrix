@@ -24,7 +24,7 @@ ARR = 6 # Auto repeat rate (in frames)
 
 UP_KEYS = [pygame.K_UP, pygame.K_w]
 DOWN_KEYS = [pygame.K_DOWN, pygame.K_s]
-LEFT_KEYS = [pygame.K_LEFT, pygame.K_w]
+LEFT_KEYS = [pygame.K_LEFT, pygame.K_a]
 RIGHT_KEYS = [pygame.K_RIGHT, pygame.K_d]
 
 # Define some colours
