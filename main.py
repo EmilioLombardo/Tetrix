@@ -26,7 +26,7 @@ def menu(selected_lvl):
     pygame.key.set_repeat(300, 100)
 
     class Level_icon(pygame.sprite.Sprite):
-        w = 50
+        w = 60
         level_font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 40)
 
         def __init__(self, num, x, y, selected):
@@ -57,11 +57,13 @@ def menu(selected_lvl):
                 self.image.blit(self.text, self.text_rect)
 
     level_icons = []
-    lvl_range = 10 # One can choose to start on levels 0-9
+    lvl_range = 20 # One can choose to start on levels 0-19
+    lvl_grid_cols = 10
     for i in range(lvl_range):
         num = i
-        x = c.width//2 - (Level_icon.w * lvl_range)//2 + i * Level_icon.w
-        y = 300
+        x = (c.width - Level_icon.w * lvl_grid_cols) // 2
+        x += (i % lvl_grid_cols) * Level_icon.w
+        y = 300 + Level_icon.w * (i // lvl_grid_cols)
         selected = True if num == selected_lvl else False
         level_icons.append(Level_icon(num, x, y, selected))
 
@@ -82,6 +84,7 @@ def menu(selected_lvl):
         for icn in level_icons:
             icn.selected = False
 
+        keys = pygame.key.get_pressed()
         events = pygame.event.get()
         for event in events:
             # Allow user to exit the screen
@@ -102,6 +105,12 @@ def menu(selected_lvl):
 
             if event.key in c.LEFT_KEYS:
                 selected_lvl = (selected_lvl - 1) % lvl_range
+
+            if event.key in c.UP_KEYS:
+                selected_lvl = (selected_lvl - lvl_grid_cols) % lvl_range
+
+            if event.key in c.DOWN_KEYS:
+                selected_lvl = (selected_lvl + lvl_grid_cols) % lvl_range
 
             if event.key in c.CONFIRM_KEYS:
                 on_menu_screen = False
