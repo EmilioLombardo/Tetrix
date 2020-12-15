@@ -20,7 +20,7 @@ FPS = 60
 clock = pygame.time.Clock()
 
 # Main menu w/ level select
-def menu():
+def menu(selected_lvl):
     title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
     title_text = title_font.render("TETRIX", True, c.WHITE)
     pygame.key.set_repeat(300, 100)
@@ -55,8 +55,6 @@ def menu():
                 self.text = self.level_font.render(
                         self.num, True, c.WHITE)
                 self.image.blit(self.text, self.text_rect)
-
-    selected_lvl = 0
 
     level_icons = []
     lvl_range = 10 # One can choose to start on levels 0-9
@@ -141,7 +139,8 @@ def game(start_level):
     draw_field_border(screen, c.GREY)
     pygame.display.flip()
 
-    while 1: # Game loop
+    in_game = True
+    while in_game: # Game loop
 
         events = pygame.event.get()
         for event in events:
@@ -155,11 +154,14 @@ def game(start_level):
 
             # Allow user to exit the screen
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                in_game = False
+
+        if in_game == False:
+            menu(start_level)
+            break
 
         updateDisplay()
         clock.tick(FPS)
 
 
-menu()
+menu(0)
