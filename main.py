@@ -116,13 +116,33 @@ def menu():
 
 def game(start_level):
 
+    pygame.key.set_repeat()
+
     # TODO: Game variables
 
+    def draw_field_border(surface, colour):
+        x0 = c.fieldPos[0]
+        y0 = c.fieldPos[1]
+        x1 = c.fieldPos[0] + c.fieldWidth + 1
+        y1 = c.fieldPos[1] + c.fieldHeight + 1
+        pygame.draw.line(surface, colour,
+                         (x0, y0), (x1, y0))
+        pygame.draw.line(surface, colour,
+                         (x0, y0), (x0, y1))
+        pygame.draw.line(surface, colour,
+                         (x0, y1), (x1, y1))
+        pygame.draw.line(surface, colour,
+                         (x1, y0), (x1, y1))
+
     def updateDisplay():
-        screen.blit(bg, (0, 0))
         pygame.display.update()
 
+    screen.blit(bg, (0, 0))
+    draw_field_border(screen, c.GREY)
+    pygame.display.flip()
+
     while 1: # Game loop
+
         events = pygame.event.get()
         for event in events:
             # Allow user to exit the screen
