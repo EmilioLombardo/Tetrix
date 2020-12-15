@@ -12,7 +12,7 @@ print(width, "x", height)
 COLS = 10
 ROWS = 20
 fieldWidth = 300
-fieldHeight = (ROWS//COLS) * fieldWidth
+fieldHeight = int(ROWS/COLS * fieldWidth)
 fieldPos = ( # (x, y) for top-left corner of playing field
     (width // 2) - (fieldWidth // 2),
     (height // 2) - (fieldHeight // 2)
