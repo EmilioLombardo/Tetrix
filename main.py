@@ -22,8 +22,7 @@ clock = pygame.time.Clock()
 # Main menu w/ level select
 def menu():
     title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
-
-    titleText = title_font.render("TETRIX", True, c.WHITE)
+    title_text = title_font.render("TETRIX", True, c.WHITE)
 
     class Level_icon(pygame.sprite.Sprite):
         w = 50
@@ -39,16 +38,22 @@ def menu():
             self.rect = (x, y, self.w, self.w)
 
             self.text = self.level_font.render(self.num, True, c.WHITE)
+            textW = self.text.get_width()
+            textH = self.text.get_height()
+            self.text_rect = (self.w//2-textW//2, self.w//2-textH//2)
 
         def update(self):
+
             if self.selected:
                 self.image.fill(c.WHITE)
-                self.text = self.level_font.render(self.num, True, c.BLUE_GRAY)
-                self.image.blit(self.text,(0, 0))
+                self.text = self.level_font.render(
+                        self.num, True, c.BLUE_GRAY)
+                self.image.blit(self.text, self.text_rect)
             else:
                 self.image.fill(c.BLUE_GRAY)
-                self.text = self.level_font.render(self.num, True, c.WHITE)
-                self.image.blit(self.text,(0, 0))
+                self.text = self.level_font.render(
+                        self.num, True, c.WHITE)
+                self.image.blit(self.text, self.text_rect)
 
     selected_lvl = 0
 
@@ -56,7 +61,7 @@ def menu():
     lvl_range = 10 # One can choose to start on levels 0-9
     for i in range(lvl_range):
         num = i
-        x = i*Level_icon.w
+        x = c.width//2 - (Level_icon.w * lvl_range)//2 + i * Level_icon.w
         y = 300
         selected = True if num == selected_lvl else False
         level_icons.append(Level_icon(num, x, y, selected))
@@ -66,6 +71,7 @@ def menu():
 
     def updateDisplay():
         screen.blit(bg, (0, 0))
+        screen.blit(title_text, (c.width//2 - title_text.get_width()//2, 100))
         lvl_select_group.update()
         lvl_select_group.draw(screen)
         pygame.display.flip()
