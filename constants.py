@@ -27,6 +27,8 @@ DOWN_KEYS = [pygame.K_DOWN, pygame.K_s]
 LEFT_KEYS = [pygame.K_LEFT, pygame.K_a]
 RIGHT_KEYS = [pygame.K_RIGHT, pygame.K_d]
 
+CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_k]
+
 # Define some colours
 PURPLE = (180, 40, 140)
 BLUE = (40, 80, 230)

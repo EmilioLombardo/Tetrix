@@ -23,6 +23,7 @@ clock = pygame.time.Clock()
 def menu():
     title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
     title_text = title_font.render("TETRIX", True, c.WHITE)
+    pygame.key.set_repeat(300, 100)
 
     class Level_icon(pygame.sprite.Sprite):
         w = 50
@@ -76,13 +77,16 @@ def menu():
         lvl_select_group.draw(screen)
         pygame.display.flip()
 
-    while 1:
+    on_menu_screen = True
+    while on_menu_screen: # Game loop for menu screen
+        updateDisplay()
+
         for icn in level_icons:
             icn.selected = False
 
-        # Allows user to exit the screen
         events = pygame.event.get()
         for event in events:
+            # Allow user to exit the screen
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -90,6 +94,7 @@ def menu():
             if event.type != pygame.KEYDOWN:
                 continue
 
+            # Allow user to exit the screen
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
@@ -100,22 +105,41 @@ def menu():
             if event.key in c.LEFT_KEYS:
                 selected_lvl = (selected_lvl - 1) % lvl_range
 
+            if event.key in c.CONFIRM_KEYS:
+                on_menu_screen = False
+                game(selected_lvl)
+
         level_icons[selected_lvl].selected = True
 
-        updateDisplay()
         clock.tick(FPS)
 
 
-def game():
+def game(start_level):
 
     # TODO: Game variables
 
     def updateDisplay():
-        # TODO: Draw stuff
+        screen.blit(bg, (0, 0))
         pygame.display.update()
 
     while 1: # Game loop
-        ### INSERT GAME HERE :P
-        break
+        events = pygame.event.get()
+        for event in events:
+            # Allow user to exit the screen
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type != pygame.KEYDOWN:
+                continue
+
+            # Allow user to exit the screen
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+        updateDisplay()
+        clock.tick(FPS)
+
 
 menu()
