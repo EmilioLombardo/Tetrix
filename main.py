@@ -3,6 +3,42 @@ import pygame
 
 import constants as c
 
+
+# ------ Class for level icons on level selection screen ------ #
+class NumIcon(pygame.sprite.Sprite):
+    w = 60
+    level_font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 40)
+
+    def __init__(self, num, x, y, selected):
+        super().__init__()
+        self.num = str(num)
+        self.selected = selected
+
+        self.image = pygame.Surface((self.w, self.w))
+        self.image.fill(c.CYAN)
+        self.rect = (x, y, self.w, self.w)
+
+        self.text = self.level_font.render(self.num, True, c.WHITE)
+        text_w = self.text.get_width()
+        text_h = self.text.get_height()
+        self.text_rect = ((self.w - text_w)//2, (self.w - text_h)//2)
+
+    def update(self):
+
+        if self.selected:
+            self.image.fill(c.WHITE)
+            self.text = self.level_font.render(
+                    self.num, True, c.BLUE_GRAY)
+            self.image.blit(self.text, self.text_rect)
+        else:
+            self.image.fill(c.BLUE_GRAY)
+            self.text = self.level_font.render(
+                    self.num, True, c.WHITE)
+            self.image.blit(self.text, self.text_rect)
+
+
+# ------ Setup ------ #
+
 # Initialise screen
 pygame.init()
 flags = pygame.DOUBLEBUF #| pygame.FULLSCREEN
@@ -19,66 +55,35 @@ bg.fill(c.BLUE_GRAY)
 FPS = 60
 clock = pygame.time.Clock()
 
-# Main menu w/ level select
+# ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
     title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
     title_text = title_font.render("TETRIX", True, c.WHITE)
     pygame.key.set_repeat(300, 100)
-
-    class Level_icon(pygame.sprite.Sprite):
-        w = 60
-        level_font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 40)
-
-        def __init__(self, num, x, y, selected):
-            super().__init__()
-            self.num = str(num)
-            self.selected = selected
-
-            self.image = pygame.Surface((self.w, self.w))
-            self.image.fill(c.CYAN)
-            self.rect = (x, y, self.w, self.w)
-
-            self.text = self.level_font.render(self.num, True, c.WHITE)
-            textW = self.text.get_width()
-            textH = self.text.get_height()
-            self.text_rect = (self.w//2-textW//2, self.w//2-textH//2)
-
-        def update(self):
-
-            if self.selected:
-                self.image.fill(c.WHITE)
-                self.text = self.level_font.render(
-                        self.num, True, c.BLUE_GRAY)
-                self.image.blit(self.text, self.text_rect)
-            else:
-                self.image.fill(c.BLUE_GRAY)
-                self.text = self.level_font.render(
-                        self.num, True, c.WHITE)
-                self.image.blit(self.text, self.text_rect)
 
     level_icons = []
     lvl_range = 20 # One can choose to start on levels 0-19
     lvl_grid_cols = 10
     for i in range(lvl_range):
         num = i
-        x = (c.width - Level_icon.w * lvl_grid_cols) // 2
-        x += (i % lvl_grid_cols) * Level_icon.w
-        y = 300 + Level_icon.w * (i // lvl_grid_cols)
+        x = (c.width - NumIcon.w * lvl_grid_cols) // 2
+        x += (i % lvl_grid_cols) * NumIcon.w
+        y = 300 + NumIcon.w * (i // lvl_grid_cols)
         selected = True if num == selected_lvl else False
-        level_icons.append(Level_icon(num, x, y, selected))
+        level_icons.append(NumIcon(num, x, y, selected))
 
     lvl_select_group = pygame.sprite.Group()
     lvl_select_group.add(*level_icons)
 
     def updateDisplay():
         screen.blit(bg, (0, 0))
-        screen.blit(title_text, (c.width//2 - title_text.get_width()//2, 100))
+        screen.blit(title_text, ((c.width - title_text.get_width())//2, 100))
         lvl_select_group.update()
         lvl_select_group.draw(screen)
         pygame.display.flip()
 
     on_menu_screen = True
-    while on_menu_screen: # Game loop for menu screen
+    while on_menu_screen:
         updateDisplay()
 
         for icn in level_icons:
@@ -114,14 +119,14 @@ def menu(selected_lvl):
 
             if event.key in c.CONFIRM_KEYS:
                 on_menu_screen = False
-                game(selected_lvl)
+                start_game(selected_lvl)
 
         level_icons[selected_lvl].selected = True
 
         clock.tick(FPS)
 
-
-def game(start_level):
+# ------ The actual gameplay ------ #
+def start_game(start_level):
 
     pygame.key.set_repeat()
 
