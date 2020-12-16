@@ -43,7 +43,7 @@ GREY = (130, 130, 130)
 BLUE_GRAY = (17, 28, 36)
 
 # What colours to use for the various tetriminos. Index represents piece type
-colours = (PURPLE, BLUE, GREEN, YELLOW, RED, ORANGE, CYAN)
+colours = (PURPLE, BLUE, GREEN, RED, ORANGE, YELLOW, CYAN)
 
 # Falling speeds for different levels
 framesPerCell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
@@ -55,7 +55,7 @@ framesPerCell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
 
 # https://harddrop.com/wiki/SRS
 
-spawn_pos = arr((-1, 4))
+spawn_pos = array((-1, 4))
 
 # Define the seven tetriminos. (0, 0) is anchor point for rotation
 tetriminos = (
