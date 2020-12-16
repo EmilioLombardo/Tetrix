@@ -261,6 +261,7 @@ def start_game(start_level):
     level = start_level
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
+    next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
 
     dead_group = pygame.sprite.LayeredDirty()
 
@@ -281,6 +282,7 @@ def start_game(start_level):
         dirty_rects = []
 
         dirty_rects += tetrimino.draw(screen)
+        dirty_rects += next_piece.draw(screen)
 
         pygame.display.update(dirty_rects)
 
@@ -318,13 +320,15 @@ def start_game(start_level):
 
         if tetrimino.lock_timer <= 0:
             dead_group.add(tetrimino.sprites())
-            tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
+            next_piece.clear(screen, bg)
+            tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
+            next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
 
         update_display()
 
         frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write( # performance monitoring
+        sys.stdout.write( ### performance monitoring
                 f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
                 + "\r")
 
