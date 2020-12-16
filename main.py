@@ -84,6 +84,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.type_ID = type_ID
         self.centre_pos = centre_pos.copy()
 
+        self.landed = False
+        self.lock_timer = 32
+
         if type_ID == 5:
             self.offsets = c.offsets_I
         elif type_ID == 6:
@@ -126,7 +129,38 @@ class Tetrimino(pygame.sprite.RenderUpdates):
             self.sprite_list[i].grid_x, self.sprite_list[i].grid_y = mino_XY
             i += 1
 
-        self.update()
+        self.update() # Calls update method of sprites
+
+    def fall(self, dead_minos):
+        self.centre_pos[1] += 1
+        self.minos_abs = self.centre_pos + self.minos_rel
+
+        if self.colliding(dead_minos):
+            self.centre_pos[1] -= 1
+            self.landed = True
+            self.minos_abs = self.centre_pos + self.minos_rel
+            return
+
+        self.landed = False
+        self.lock_timer = 32
+        self.update_sprites()
+
+    def colliding(self, dead_minos):
+        for m in self.minos_abs:
+            # Collision with floor
+            if m[1] >= c.ROWS:
+                return True
+
+            # Collision with walls
+            if not 0 <= m[0] < c.COLS:
+                return True
+
+            # Collision with dead minos
+            for dead in dead_minos:
+                if list(m) == [dead.grid_x, dead.grid_y]:
+                    return True
+
+        return False
 
 
 # ------ Setup ------ #
@@ -223,7 +257,12 @@ def start_game(start_level):
     pygame.key.set_repeat()
 
     # TODO: Game variables
+    frame_counter = 0
+    level = start_level
+
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
+
+    dead_group = pygame.sprite.LayeredDirty()
 
     def draw_field_border(surface, colour):
         x0 = c.fieldPos[0]
@@ -270,8 +309,24 @@ def start_game(start_level):
             menu(start_level)
             break
 
+        if tetrimino.landed:
+            tetrimino.lock_timer -= 1
+
+        if frame_counter % c.frames_per_cell[level] == 0:
+            tetrimino.clear(screen, bg)
+            tetrimino.fall(dead_group.sprites())
+
+        if tetrimino.lock_timer <= 0:
+            dead_group.add(tetrimino.sprites())
+            tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
+
         update_display()
+
+        frame_counter += 1
         clock.tick(FPS)
+        sys.stdout.write( # performance monitoring
+                f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
+                + "\r")
 
 
 menu(0)
