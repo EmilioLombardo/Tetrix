@@ -161,7 +161,7 @@ def menu(selected_lvl):
     lvl_select_group = pygame.sprite.Group()
     lvl_select_group.add(*level_icons)
 
-    def updateDisplay():
+    def update_display():
         screen.blit(bg, (0, 0))
         screen.blit(title_text, ((c.width - title_text.get_width())//2, 100))
         lvl_select_group.update()
@@ -170,7 +170,7 @@ def menu(selected_lvl):
 
     on_menu_screen = True
     while on_menu_screen:
-        updateDisplay()
+        update_display()
 
         for icn in level_icons:
             icn.selected = False
@@ -232,7 +232,7 @@ def start_game(start_level):
         pygame.draw.line(surface, colour,
                          (x1, y0), (x1, y1))
 
-    def updateDisplay():
+    def update_display():
         dirty_rects = []
 
         dirty_rects += tetrimino.draw(screen)
@@ -264,7 +264,7 @@ def start_game(start_level):
             menu(start_level)
             break
 
-        updateDisplay()
+        update_display()
         clock.tick(FPS)
 
 
