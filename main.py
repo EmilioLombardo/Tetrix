@@ -330,12 +330,6 @@ def start_game(start_level):
 
             # --- Shifting on left/right keypress --- #
 
-            # If one of the shifting keys are released, reset DAS counter
-            if (event.type == pygame.KEYUP and
-                event.key in c.LEFT_KEYS + c.RIGHT_KEYS):
-
-                DAS_counter = 0
-
             if event.type != pygame.KEYDOWN:
                 continue
 
