@@ -134,6 +134,24 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
         self.update() # Calls update method of sprites
 
+    def shift(self, dir, dead_minos):
+        prev = self.centre_pos[0]
+
+        if dir == "left":
+            self.centre_pos[0] -= 1
+
+        elif dir == "right":
+            self.centre_pos[0] += 1
+
+        self.update_minos()
+
+        if self.colliding(dead_minos):
+            self.centre_pos[0] = prev
+            self.update_minos()
+            return
+
+        self.update_sprites()
+
     def fall(self, dead_minos):
         self.centre_pos[1] += 1
         self.update_minos()
