@@ -93,21 +93,24 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
         self.rot_index = 0 # Rotation index (0-3 for the four rotations)
 
-        self.minos = [] # List with coordinate pairs for each mino
+        self.minos_rel = [] # List with coordinate pairs for each mino
+                            # (Coordinates are relative to centre_pos)
 
         for mino_XY in c.tetriminos[self.type_ID]:
-            self.minos.append(mino_XY)
+            self.minos_rel.append(mino_XY)
 
-        self.minos = array(self.minos)
-        self.minos += self.centre_pos
-        self.minos += self.offsets[self.rot_index][0]
+        self.minos_rel = array(self.minos_rel)
+
+        # minos_abs is like minos_rel, but with coords relative to grid origin
+        self.minos_abs = self.minos_rel + self.centre_pos
+        self.minos_abs += self.offsets[self.rot_index][0]
 
         # --- Sprite/group stuff --- #
 
         colour = c.colours[self.type_ID]
 
         # Add sprites to self
-        for mino_XY in self.minos:
+        for mino_XY in self.minos_abs:
             self.add(Mino(colour, *mino_XY))
 
         self.sprite_list = self.sprites()
@@ -115,8 +118,11 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.update_sprites()
 
     def update_sprites(self):
+        self.minos_abs = self.minos_rel + self.centre_pos
+        self.minos_abs += self.offsets[self.rot_index][0]
+
         i = 0
-        for mino_XY in self.minos:
+        for mino_XY in self.minos_abs:
             self.sprite_list[i].grid_x, self.sprite_list[i].grid_y = mino_XY
             i += 1
 
