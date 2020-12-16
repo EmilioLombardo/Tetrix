@@ -118,12 +118,15 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
         self.sprite_list = self.sprites()
 
+        self.update_minos()
         self.update_sprites()
 
-    def update_sprites(self):
+    # Method to update coords of minos_abs according to centre_pos
+    def update_minos(self):
         self.minos_abs = self.minos_rel + self.centre_pos
         self.minos_abs += self.offsets[self.rot_index][0]
 
+    def update_sprites(self):
         i = 0
         for mino_XY in self.minos_abs:
             self.sprite_list[i].grid_x, self.sprite_list[i].grid_y = mino_XY
@@ -133,12 +136,12 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
     def fall(self, dead_minos):
         self.centre_pos[1] += 1
-        self.minos_abs = self.centre_pos + self.minos_rel
+        self.update_minos()
 
         if self.colliding(dead_minos):
             self.centre_pos[1] -= 1
+            self.update_minos()
             self.landed = True
-            self.minos_abs = self.centre_pos + self.minos_rel
             return
 
         self.landed = False
@@ -303,7 +306,7 @@ def start_game(start_level):
             if event.type != pygame.KEYDOWN:
                 continue
 
-            # Allow user to exit the screen
+            # ESC -> Exit to menu
             if event.key == pygame.K_ESCAPE:
                 in_game = False
 
