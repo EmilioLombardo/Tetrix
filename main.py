@@ -279,6 +279,7 @@ def start_game(start_level):
 
     # TODO: Game variables
     frame_counter = 0
+    DAS_counter = 0 # For control of horisontal movement delays
     level = start_level
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
@@ -321,16 +322,54 @@ def start_game(start_level):
                 pygame.quit()
                 sys.exit()
 
+            # ESC -> Exit to menu
+            if (event.type == pygame.KEYDOWN and
+                event.key == pygame.K_ESCAPE):
+                in_game = False
+
+            # --- Shifting on left/right keypress --- #
+
+            # If one of the shifting keys are released, reset DAS counter
+            if (event.type == pygame.KEYUP and
+                event.key in [pygame.K_a, pygame.K_d]):
+
+                DAS_counter = 0
+
             if event.type != pygame.KEYDOWN:
                 continue
 
-            # ESC -> Exit to menu
-            if event.key == pygame.K_ESCAPE:
-                in_game = False
+            if event.key in c.LEFT_KEYS:
+                tetrimino.clear(screen, bg)
+                tetrimino.shift("left", dead_group.sprites())
+                DAS_counter = 0
+
+            elif event.key in c.RIGHT_KEYS:
+                tetrimino.clear(screen, bg)
+                tetrimino.shift("right", dead_group.sprites())
+                DAS_counter = 0
 
         if in_game == False:
             menu(start_level)
             break
+
+        # --- Manage auto-shift --- #
+        keys = pygame.key.get_pressed()
+
+        for k in c.LEFT_KEYS:
+            if keys[k]: # If LEFT is held
+                DAS_counter += 1
+                if DAS_counter == c.DAS:
+                    tetrimino.clear(screen, bg)
+                    tetrimino.shift("left", dead_group.sprites())
+                    DAS_counter = c.DAS - c.ARR
+
+        for k in c.RIGHT_KEYS:
+            if keys[k]: # If RIGHT is held
+                DAS_counter += 1
+                if DAS_counter == c.DAS:
+                    tetrimino.clear(screen, bg)
+                    tetrimino.shift("right", dead_group.sprites())
+                    DAS_counter = c.DAS - c.ARR
 
         if tetrimino.landed:
             tetrimino.lock_timer -= 1
