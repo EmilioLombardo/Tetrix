@@ -36,6 +36,7 @@ class NumIcon(pygame.sprite.Sprite):
                     self.num, True, c.WHITE)
             self.image.blit(self.text, self.text_rect)
 
+# ------ Class for individual minos (blocks) ------ #
 class Mino(pygame.sprite.DirtySprite):
     w = c.cellSize
 
@@ -71,6 +72,12 @@ class Mino(pygame.sprite.DirtySprite):
             return
 
         self.dirty = 1
+
+# ------ Class for tetriminos (pieces/shapes) ------ #
+class Tetrimino:
+    def __init__(self, type_ID, centre_pos):
+        self.type_ID = type_ID
+        self.centre_pos = centre_pos.copy()
 
 
 # ------ Setup ------ #
