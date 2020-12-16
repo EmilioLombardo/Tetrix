@@ -59,7 +59,7 @@ spawn_pos = array((4, -1))
 
 # Define the seven tetriminos. (0, 0) is anchor point for rotation
 tetriminos = (
-        ((-1, 0), (0, -1), (0, 0), (0, 1)), # 	ID 0: T
+        ((-1, 0), (0, -1), (0, 0), (1, 0)), # 	ID 0: T
         ((-1, -1), (-1, 0), (0, 0), (1, 0)), # 	ID 1: J
         ((-1, -1), (0, -1), (0, 0), (1, 0)), # 	ID 2: Z
         ((-1, 0), (0, 0), (0, -1), (1, -1)), # 	ID 3: S
