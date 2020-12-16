@@ -355,21 +355,25 @@ def start_game(start_level):
         # --- Manage auto-shift --- #
         keys = pygame.key.get_pressed()
 
+        # If LEFT is held
         for k in c.LEFT_KEYS:
-            if keys[k]: # If LEFT is held
-                DAS_counter += 1
-                if DAS_counter == c.DAS:
-                    tetrimino.clear(screen, bg)
-                    tetrimino.shift("left", dead_group.sprites())
-                    DAS_counter = c.DAS - c.ARR
+            if not keys[k]:
+                continue
+            DAS_counter += 1
+            if DAS_counter == c.DAS:
+                tetrimino.clear(screen, bg)
+                tetrimino.shift("left", dead_group.sprites())
+                DAS_counter = c.DAS - c.ARR
 
+        # If RIGHT is held
         for k in c.RIGHT_KEYS:
-            if keys[k]: # If RIGHT is held
-                DAS_counter += 1
-                if DAS_counter == c.DAS:
-                    tetrimino.clear(screen, bg)
-                    tetrimino.shift("right", dead_group.sprites())
-                    DAS_counter = c.DAS - c.ARR
+            if not keys[k]:
+                continue
+            DAS_counter += 1
+            if DAS_counter == c.DAS:
+                tetrimino.clear(screen, bg)
+                tetrimino.shift("right", dead_group.sprites())
+                DAS_counter = c.DAS - c.ARR
 
         if tetrimino.landed:
             tetrimino.lock_timer -= 1
