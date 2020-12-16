@@ -332,7 +332,7 @@ def start_game(start_level):
 
             # If one of the shifting keys are released, reset DAS counter
             if (event.type == pygame.KEYUP and
-                event.key in [pygame.K_a, pygame.K_d]):
+                event.key in c.LEFT_KEYS + c.RIGHT_KEYS):
 
                 DAS_counter = 0
 
