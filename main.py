@@ -79,9 +79,9 @@ class Tetrimino:
         self.type_ID = type_ID
         self.centre_pos = centre_pos.copy()
 
-        if typeID == 5:
+        if type_ID == 5:
             self.offsets = c.offsets_I
-        elif typeID == 6:
+        elif type_ID == 6:
             self.offsets = c.offsets_O
         else:
             self.offsets = c.offsets_TJZSL
