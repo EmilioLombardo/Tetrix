@@ -1,5 +1,7 @@
 import sys
 import pygame
+import random
+from numpy import array
 
 import constants as c
 
@@ -76,8 +78,9 @@ class Mino(pygame.sprite.DirtySprite):
         self.dirty = 1
 
 # ------ Class for tetrimino logic ------ #
-class Tetrimino:
+class Tetrimino(pygame.sprite.RenderUpdates):
     def __init__(self, type_ID, centre_pos):
+        super().__init__()
         self.type_ID = type_ID
         self.centre_pos = centre_pos.copy()
 
@@ -96,7 +99,28 @@ class Tetrimino:
             self.minos.append(mino_XY)
 
         self.minos = array(self.minos)
-        self.minos += self.offsets[self.rot_index]
+        self.minos += self.centre_pos
+        self.minos += self.offsets[self.rot_index][0]
+
+        # --- Sprite/group stuff --- #
+
+        colour = c.colours[self.type_ID]
+
+        # Add sprites to self
+        for mino_XY in self.minos:
+            self.add(Mino(colour, *mino_XY))
+
+        self.sprite_list = self.sprites()
+
+        self.update_sprites()
+
+    def update_sprites(self):
+        i = 0
+        for mino_XY in self.minos:
+            self.sprite_list[i].grid_x, self.sprite_list[i].grid_y = mino_XY
+            i += 1
+
+        self.update()
 
 
 # ------ Setup ------ #
