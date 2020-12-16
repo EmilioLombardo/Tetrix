@@ -287,10 +287,10 @@ def start_game(start_level):
     dead_group = pygame.sprite.LayeredDirty()
 
     def draw_field_border(surface, colour):
-        x0 = c.fieldPos[0]
+        x0 = c.fieldPos[0] - 1
         y0 = c.fieldPos[1]
-        x1 = c.fieldPos[0] + c.fieldWidth + 1
-        y1 = c.fieldPos[1] + c.fieldHeight + 1
+        x1 = c.fieldPos[0] + c.fieldWidth
+        y1 = c.fieldPos[1] + c.fieldHeight
 
         pygame.draw.line(surface, colour,
                          (x0, y0), (x0, y1))
