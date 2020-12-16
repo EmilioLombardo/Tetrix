@@ -55,8 +55,10 @@ framesPerCell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
 
 # https://harddrop.com/wiki/SRS
 
+spawn_pos = arr((-1, 4))
+
 # Define the seven tetriminos. (0, 0) is anchor point for rotation
-pieces = (
+tetriminos = (
         ((-1, 0), (0, -1), (0, 0), (0, 1)), # 	ID 0: T
         ((-1, -1), (-1, 0), (0, 0), (1, 0)), # 	ID 1: J
         ((-1, -1), (0, -1), (0, 0), (1, 0)), # 	ID 2: Z

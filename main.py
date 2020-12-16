@@ -73,11 +73,28 @@ class Mino(pygame.sprite.DirtySprite):
 
         self.dirty = 1
 
-# ------ Class for tetriminos (pieces/shapes) ------ #
+# ------ Class for tetrimino logic ------ #
 class Tetrimino:
     def __init__(self, type_ID, centre_pos):
         self.type_ID = type_ID
         self.centre_pos = centre_pos.copy()
+
+        if typeID == 5:
+            self.offsets = c.offsets_I
+        elif typeID == 6:
+            self.offsets = c.offsets_O
+        else:
+            self.offsets = c.offsets_TJZSL
+
+        self.rot_index = 0 # Rotation index (0-3 for the four rotations)
+
+        self.minos = [] # List with coordinate pairs for each mino
+
+        for mino_XY in c.tetriminos[self.type_ID]:
+            self.minos.append(mino_XY)
+
+        self.minos = array(self.minos)
+        self.minos += self.offsets[self.rot_index]
 
 
 # ------ Setup ------ #
