@@ -280,6 +280,7 @@ def start_game(start_level):
     # TODO: Game variables
     frame_counter = 0
     DAS_counter = 0 # For control of horisontal movement delays
+    soft_drop = False
     level = start_level
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
@@ -375,20 +376,33 @@ def start_game(start_level):
                 tetrimino.shift("right", dead_group.sprites())
                 DAS_counter = c.DAS - c.ARR
 
+        # --- Gravity and landing stuff --- #
+
+        # If DOWN is held
+        for k in c.DOWN_KEYS:
+            soft_drop = False
+            if keys[k]:
+                soft_drop = True
+                if tetrimino.lock_timer > 2: tetrimino.lock_timer = 2
+                break
+
         if tetrimino.landed:
             tetrimino.lock_timer -= 1
 
-        if frame_counter % c.frames_per_cell[level] == 0:
+        if tetrimino.lock_timer > 0 and (
+            (soft_drop and frame_counter % 2 == 0) or (
+            not soft_drop and frame_counter % c.frames_per_cell[level] == 0)
+            ):
             tetrimino.clear(screen, bg)
             tetrimino.fall(dead_group.sprites())
+
+        update_display()
 
         if tetrimino.lock_timer <= 0:
             dead_group.add(tetrimino.sprites())
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
             next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
-
-        update_display()
 
         frame_counter += 1
         clock.tick(FPS)
