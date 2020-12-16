@@ -41,29 +41,31 @@ class Mino(pygame.sprite.DirtySprite):
     w = c.cellSize
 
     def grid_to_pixel(cls, grid_x, grid_y):
-    	pixel_x = c.cellSize * grid_y + c.fieldPos[0]
-    	pixel_y = c.cellSize * grid_y + c.fieldPos[1]
-    	return pixel_x, pixel_y
+        pixel_x = c.cellSize * grid_x + c.fieldPos[0]
+        pixel_y = c.cellSize * grid_y + c.fieldPos[1]
+        return pixel_x, pixel_y
 
     def __init__(self, colour, x, y):
         super().__init__()
         self.grid_x = x
         self.grid_y = y
-        self.pixel_x, self.pixel_y = self.grid_to_pixel(grid_x, grid_y)
+        self.pixel_x, self.pixel_y = self.grid_to_pixel(self.grid_x,
+                                                        self.grid_y)
 
         self.colour = colour
 
         self.image = pygame.Surface((self.w, self.w))
         self.image.fill(self.colour)
-        self.rect = (self.pixelX, self.pixelY, self.w, self.w)
+        self.rect = (self.pixel_x, self.pixel_y, self.w, self.w)
 
     def update(self):
         prev = self.image, self.rect
 
         self.image.fill(self.colour)
 
-        self.pixelX, self.pixelY = self.grid_to_pixel(grid_y, grid_y)
-        self.rect = (self.pixelX, self.pixelY, self.w, self.w)
+        self.pixel_x, self.pixel_y = self.grid_to_pixel(self.grid_x,
+                                                        self.grid_y)
+        self.rect = (self.pixel_x, self.pixel_y, self.w, self.w)
 
         curr = self.image, self.rect
 
