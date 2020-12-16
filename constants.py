@@ -46,7 +46,7 @@ BLUE_GRAY = (17, 28, 36)
 colours = (PURPLE, BLUE, GREEN, RED, ORANGE, YELLOW, CYAN)
 
 # Falling speeds for different levels
-framesPerCell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
+frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
                  9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
                  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                  1]
