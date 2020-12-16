@@ -6,8 +6,8 @@ displayInfo = pygame.display.Info()
 
 # width = displayInfo.current_w
 # height = displayInfo.current_h
-width = 720
-height = 720
+width = 750
+height = 750
 print(width, "x", height)
 
 COLS = 10
@@ -64,7 +64,7 @@ tetriminos = (
         ((-1, -1), (0, -1), (0, 0), (1, 0)), # 	ID 2: Z
         ((-1, 0), (0, 0), (0, -1), (1, -1)), # 	ID 3: S
         ((-1, 0), (0, 0), (1, 0), (1, -1)), # 	ID 4: L
-        ((0, 1), (1, -1), (0, 0), (1, 0)), # 	ID 5: O
+        ((0, -1), (1, -1), (0, 0), (1, 0)), # 	ID 5: O
         ((-1, 0), (0, 0), (1, 0), (2, 0)) # 	ID 6: I
 )
 
