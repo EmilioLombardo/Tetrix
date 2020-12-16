@@ -217,14 +217,14 @@ def start_game(start_level):
     pygame.key.set_repeat()
 
     # TODO: Game variables
+    tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
 
     def draw_field_border(surface, colour):
         x0 = c.fieldPos[0]
         y0 = c.fieldPos[1]
         x1 = c.fieldPos[0] + c.fieldWidth + 1
         y1 = c.fieldPos[1] + c.fieldHeight + 1
-        pygame.draw.line(surface, colour,
-                         (x0, y0), (x1, y0))
+
         pygame.draw.line(surface, colour,
                          (x0, y0), (x0, y1))
         pygame.draw.line(surface, colour,
@@ -233,7 +233,11 @@ def start_game(start_level):
                          (x1, y0), (x1, y1))
 
     def updateDisplay():
-        pygame.display.update()
+        dirty_rects = []
+
+        dirty_rects += tetrimino.draw(screen)
+
+        pygame.display.update(dirty_rects)
 
     screen.blit(bg, (0, 0))
     draw_field_border(screen, c.GREY)
