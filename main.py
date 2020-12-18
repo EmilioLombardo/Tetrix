@@ -84,7 +84,6 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.type_ID = type_ID
         self.centre_pos = centre_pos.copy()
 
-        self.landed = False
         self.lock_timer = 32
 
         if type_ID == 5:
@@ -96,89 +95,131 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
         self.rot_index = 0 # Rotation index (0-3 for the four rotations)
 
-        self.minos_rel = [] # List with coordinate pairs for each mino
-                            # (Coordinates are relative to centre_pos)
+        self.minos = [] # List with grid coordinate pairs for each mino
 
         for mino_XY in c.tetriminos[self.type_ID]:
-            self.minos_rel.append(mino_XY)
+            self.minos.append(mino_XY)
 
-        self.minos_rel = array(self.minos_rel)
-
-        # minos_abs is like minos_rel, but with coords relative to grid origin
-        self.minos_abs = self.minos_rel + self.centre_pos
-        self.minos_abs += self.offsets[self.rot_index][0]
+        self.minos = array(self.minos)
+        self.minos = self.minos + self.centre_pos
+        self.minos += self.offsets[self.rot_index][0]
 
         # --- Sprite/group stuff --- #
 
-        colour = c.colours[self.type_ID]
+        self.colour = c.colours[self.type_ID]
 
         # Add sprites to self
-        for mino_XY in self.minos_abs:
-            self.add(Mino(colour, *mino_XY))
+        for mino_XY in self.minos:
+            self.add(Mino(self.colour, *mino_XY))
 
         self.sprite_list = self.sprites()
 
-        self.update_minos()
         self.update_sprites()
 
-    # Method to update coords of minos_abs according to centre_pos
-    def update_minos(self):
-        self.minos_abs = self.minos_rel + self.centre_pos
-        self.minos_abs += self.offsets[self.rot_index][0]
-
     def update_sprites(self):
-        i = 0
-        for mino_XY in self.minos_abs:
-            self.sprite_list[i].grid_x, self.sprite_list[i].grid_y = mino_XY
-            i += 1
 
-        self.update() # Calls update method of sprites
+        for i in range(len(self.minos)):
+            self.sprite_list[i].grid_x = self.minos[i][0]
+            self.sprite_list[i].grid_y = self.minos[i][1]
+
+        # Call update method of sprites
+        self.update()
+
+    def rotate(self, dir, dead_minos):
+        prev_rot = self.rot_index
+        prev_minos = self.minos.copy()
+
+        # --- Pure rotation --- #
+
+        # Translate minos to origin
+        self.minos -= self.centre_pos
+
+        # Rotate minos about origin
+        if dir == "cw": # Clockwise
+            self.minos = array([(-m[1], m[0]) for m in self.minos])
+            self.rot_index = (self.rot_index + 1) % 4
+
+        elif dir == "ccw": # Counterclockwise
+            self.minos = array([(m[1], -m[0]) for m in self.minos])
+            self.rot_index = (self.rot_index - 1) % 4
+
+        # Translate minos back
+        self.minos += self.centre_pos
+
+        # --- Wall kicks  --- #
+
+        kick_tests = self.offsets[prev_rot] - self.offsets[self.rot_index]
+
+        for kick in kick_tests:
+            self.minos += kick
+            self.centre_pos += kick
+            if not self.colliding(dead_minos):
+                # Wall kick was successful :)
+                self.update_sprites()
+                return
+
+            # Kick failed. Undo failed kick before testing next one
+            self.minos -= kick
+            self.centre_pos -= kick
+
+        # No wall kick was succesful. Reset to previous state
+        self.minos = prev_minos
+        self.rot_index = prev_rot
 
     def shift(self, dir, dead_minos):
-        prev = self.centre_pos[0]
+        prev_minos = self.minos.copy()
+        prev_centre = self.centre_pos.copy()
 
         if dir == "left":
             self.centre_pos[0] -= 1
+            self.minos[:,0] -= 1
 
         elif dir == "right":
             self.centre_pos[0] += 1
-
-        self.update_minos()
+            self.minos[:,0] += 1
 
         if self.colliding(dead_minos):
-            self.centre_pos[0] = prev
-            self.update_minos()
+            self.minos = prev_minos
+            self.centre_pos = prev_centre
+            self.update_sprites()
             return
 
         self.update_sprites()
 
     def fall(self, dead_minos):
-        self.centre_pos[1] += 1
-        self.update_minos()
 
-        if self.colliding(dead_minos):
-            self.centre_pos[1] -= 1
-            self.update_minos()
-            self.landed = True
-            return
-
-        self.landed = False
-        self.lock_timer = 32
-        self.update_sprites()
+        if not self.landed(dead_minos):
+            self.minos[:,1] += 1
+            self.centre_pos[1] += 1
+            self.lock_timer = 32
+            self.update_sprites()
 
     def colliding(self, dead_minos):
-        for m in self.minos_abs:
+        for m in self.minos:
             # Collision with floor
             if m[1] >= c.ROWS:
                 return True
 
             # Collision with walls
-            if not 0 <= m[0] < c.COLS:
+            if not (0 <= m[0] < c.COLS):
                 return True
 
             # Collision with dead minos
             for dead in dead_minos:
                 if list(m) == [dead.grid_x, dead.grid_y]:
+                    return True
+
+        return False
+
+    def landed(self, dead_minos):
+        for m in self.minos:
+            # Check if landed on floor
+            if m[1] + 1 >= c.ROWS:
+                return True
+
+            # Check if landed on any dead minos
+            for dead in dead_minos:
+                if (m[0], m[1] + 1) == (dead.grid_x, dead.grid_y):
                     return True
 
         return False
@@ -278,7 +319,7 @@ def start_game(start_level):
     pygame.key.set_repeat()
 
     # TODO: Game variables
-    frame_counter = 0
+    frame_counter = 1
     DAS_counter = 0 # For control of horisontal movement delays
     soft_drop = False
     level = start_level
@@ -330,7 +371,8 @@ def start_game(start_level):
 
             # --- Shifting on left/right keypress --- #
 
-            if event.type != pygame.KEYDOWN:
+            if not (event.type == pygame.KEYDOWN and
+                    tetrimino.lock_timer > 0):
                 continue
 
             if event.key in c.LEFT_KEYS:
@@ -338,39 +380,45 @@ def start_game(start_level):
                 tetrimino.shift("left", dead_group.sprites())
                 DAS_counter = 0
 
-            elif event.key in c.RIGHT_KEYS:
+            if event.key in c.RIGHT_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("right", dead_group.sprites())
                 DAS_counter = 0
 
+            # --- Rotation on keypress --- #
+            if event.key in c.CW_KEYS:
+                tetrimino.clear(screen, bg)
+                tetrimino.rotate("cw", dead_group.sprites())
+
+            if event.key in c.CCW_KEYS:
+                tetrimino.clear(screen, bg)
+                tetrimino.rotate("ccw", dead_group.sprites())
+
         if in_game == False:
+            # Quit to menu
             menu(start_level)
             break
 
         # --- Manage auto-shift --- #
         keys = pygame.key.get_pressed()
 
-        # If LEFT is held
-        for k in c.LEFT_KEYS:
-            if not keys[k]:
-                continue
+        dir_held = None
+
+        # Check if LEFT is held
+        for L, R in zip(c.LEFT_KEYS, c.RIGHT_KEYS):
+            if not (keys[L] == keys[R]):
+                # If only one direction is held
+                dir_held = "left" if keys[L] else "right"
+                break
+
+        if dir_held and tetrimino.lock_timer > 0:
             DAS_counter += 1
             if DAS_counter == c.DAS:
                 tetrimino.clear(screen, bg)
-                tetrimino.shift("left", dead_group.sprites())
+                tetrimino.shift(dir_held, dead_group.sprites())
                 DAS_counter = c.DAS - c.ARR
 
-        # If RIGHT is held
-        for k in c.RIGHT_KEYS:
-            if not keys[k]:
-                continue
-            DAS_counter += 1
-            if DAS_counter == c.DAS:
-                tetrimino.clear(screen, bg)
-                tetrimino.shift("right", dead_group.sprites())
-                DAS_counter = c.DAS - c.ARR
-
-        # --- Gravity and landing stuff --- #
+        # --- Falling and landing --- #
 
         # If DOWN is held
         for k in c.DOWN_KEYS:
@@ -380,7 +428,7 @@ def start_game(start_level):
                 if tetrimino.lock_timer > 2: tetrimino.lock_timer = 2
                 break
 
-        if tetrimino.landed:
+        if tetrimino.landed(dead_group.sprites()):
             tetrimino.lock_timer -= 1
 
         if tetrimino.lock_timer > 0 and (
@@ -392,7 +440,7 @@ def start_game(start_level):
 
         update_display()
 
-        if tetrimino.lock_timer <= 0:
+        if tetrimino.lock_timer <= -4:
             dead_group.add(tetrimino.sprites())
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
