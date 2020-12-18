@@ -359,8 +359,8 @@ def start_game(start_level):
 
         pygame.display.update(dirty_rects)
 
-    screen.blit(bg, (0, 0))
     draw_field_border(bg, c.GREY)
+    screen.blit(bg, (0, 0))
     pygame.display.flip()
 
     in_game = True
