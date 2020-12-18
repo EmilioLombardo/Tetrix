@@ -28,6 +28,9 @@ DOWN_KEYS = [pygame.K_DOWN, pygame.K_s]
 LEFT_KEYS = [pygame.K_LEFT, pygame.K_a]
 RIGHT_KEYS = [pygame.K_RIGHT, pygame.K_d]
 
+CW_KEYS = [pygame.K_UP, pygame.K_w, pygame.K_k, pygame.K_x, pygame.K_PERIOD]
+CCW_KEYS = [pygame.K_j, pygame.K_z, pygame.K_COMMA]
+
 CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_k]
 
 # Define some colours
