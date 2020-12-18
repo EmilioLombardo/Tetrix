@@ -235,9 +235,23 @@ screen = pygame.display.set_mode((c.width, c.height), flags)
 pygame.display.set_caption("Tetrix")
 
 # Fill background
+def draw_field_border(surface, colour):
+    x0 = c.fieldPos[0] - 1
+    y0 = c.fieldPos[1]
+    x1 = c.fieldPos[0] + c.fieldWidth
+    y1 = c.fieldPos[1] + c.fieldHeight
+
+    pygame.draw.line(surface, colour,
+                     (x0, y0), (x0, y1))
+    pygame.draw.line(surface, colour,
+                     (x0, y1), (x1, y1))
+    pygame.draw.line(surface, colour,
+                     (x1, y0), (x1, y1))
+
 bg = pygame.Surface(screen.get_size())
 bg = bg.convert()
 bg.fill(c.BLUE_GRAY)
+draw_field_border(bg, c.GREY)
 
 # ØØØØØ
 FPS = 60
@@ -338,19 +352,6 @@ def start_game(start_level):
 
     dead_group = pygame.sprite.LayeredDirty()
 
-    def draw_field_border(surface, colour):
-        x0 = c.fieldPos[0] - 1
-        y0 = c.fieldPos[1]
-        x1 = c.fieldPos[0] + c.fieldWidth
-        y1 = c.fieldPos[1] + c.fieldHeight
-
-        pygame.draw.line(surface, colour,
-                         (x0, y0), (x0, y1))
-        pygame.draw.line(surface, colour,
-                         (x0, y1), (x1, y1))
-        pygame.draw.line(surface, colour,
-                         (x1, y0), (x1, y1))
-
     def update_display():
         dirty_rects = []
 
@@ -359,8 +360,8 @@ def start_game(start_level):
 
         pygame.display.update(dirty_rects)
 
-    draw_field_border(bg, c.GREY)
     screen.blit(bg, (0, 0))
+    draw_field_border(screen, c.GREY)
     pygame.display.flip()
 
     in_game = True
