@@ -119,8 +119,8 @@ class Tetrimino(pygame.sprite.RenderUpdates):
     def update_sprites(self):
 
         for i in range(len(self.minos)):
-            self.sprite_list[i].grid_x = self.minos[i][0]
-            self.sprite_list[i].grid_y = self.minos[i][1]
+            spr = self.sprite_list[i]
+            spr.grid_x, spr.grid_y = self.minos[i]
 
         # Call update method of sprites
         self.update()
@@ -257,6 +257,7 @@ draw_field_border(bg, c.GREY)
 FPS = 60
 clock = pygame.time.Clock()
 
+
 # ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
     title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
@@ -383,6 +384,7 @@ def start_game(start_level):
                     tetrimino.lock_timer > 0):
                 continue
 
+            # --- Register DOWN press for soft drop control --- #
             if event.key in c.DOWN_KEYS:
                 soft_drop_started = True
 
@@ -394,27 +396,31 @@ def start_game(start_level):
                 tetrimino.shift("left", dead_group.sprites())
                 DAS_counter = 0
 
-                spawn_freeze_counter = 0
+                spawn_freeze_counter = min(c.frames_per_cell[level],
+                                           spawn_freeze_counter)
 
             if event.key in c.RIGHT_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("right", dead_group.sprites())
                 DAS_counter = 0
 
-                spawn_freeze_counter = 0
+                spawn_freeze_counter = min(c.frames_per_cell[level],
+                                           spawn_freeze_counter)
 
             # --- Rotation on keypress --- #
             if event.key in c.CW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("cw", dead_group.sprites())
 
-                spawn_freeze_counter = 0
+                spawn_freeze_counter = min(c.frames_per_cell[level],
+                                           spawn_freeze_counter)
 
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("ccw", dead_group.sprites())
 
-                spawn_freeze_counter = 0
+                spawn_freeze_counter = min(c.frames_per_cell[level],
+                                           spawn_freeze_counter)
 
         if in_game == False:
             # Quit to menu
@@ -463,7 +469,11 @@ def start_game(start_level):
             tetrimino.clear(screen, bg)
             tetrimino.fall(dead_group.sprites())
 
+        # --- Drawing stuff and updating screen --- #
+
         update_display()
+
+        # --- Spawning new tetrimino and next piece --- #
 
         if tetrimino.lock_timer <= -4:
             dead_group.add(tetrimino.sprites())
@@ -474,13 +484,16 @@ def start_game(start_level):
             soft_drop_started = False
             spawn_freeze_counter = max_spawn_freeze
 
+        # --- Time stuff --- #
+
         if spawn_freeze_counter > 0:
             spawn_freeze_counter -= 1
             frame_counter = 0
         else:
             frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write(f"      {tetrimino.lock_timer}    \r") ### debug
+        sys.stdout.write(f"		{spawn_freeze_counter}    \r") ### debug
+        sys.stdout.write(f"	{tetrimino.lock_timer}    \r") ### debug
         sys.stdout.write( ### performance monitoring
                 f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
                 + "\r")
