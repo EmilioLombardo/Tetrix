@@ -88,11 +88,11 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.lock_timer = 32
 
         if type_ID == 5:
-            self.offsets = c.offsets_I
+            self.offsets = c.offsets_O.copy()
         elif type_ID == 6:
-            self.offsets = c.offsets_O
+            self.offsets = c.offsets_I.copy()
         else:
-            self.offsets = c.offsets_TJZSL
+            self.offsets = c.offsets_TJZSL.copy()
 
         self.rot_index = 0 # Rotation index (0-3 for the four rotations)
 
