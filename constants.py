@@ -43,7 +43,7 @@ GREY = (130, 130, 130)
 BLUE_GRAY = (17, 28, 36)
 
 # What colours to use for the various tetriminos. Index represents piece type
-colours = (PURPLE, BLUE, GREEN, RED, ORANGE, YELLOW, CYAN)
+colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
 # Falling speeds for different levels
 frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
