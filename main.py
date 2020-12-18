@@ -318,11 +318,18 @@ def start_game(start_level):
 
     pygame.key.set_repeat()
 
-    # TODO: Game variables
+    max_spawn_freeze = 31 # Max freeze frames after piece has spawned
+                          # Freeze frames can be cancelled by any keypress
+
+    spawn_freeze_counter = max_spawn_freeze
     frame_counter = 1
     DAS_counter = 0 # For control of horisontal movement delays
-    soft_drop = False
     level = start_level
+
+    soft_drop = False # If True, piece falls faster than normal
+    soft_drop_started = False # True once DOWN is pressed (not just held).
+                              # Resets with each new piece, so you have to
+                              # repress DOWN to start a soft drop again.
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
     next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
@@ -369,30 +376,42 @@ def start_game(start_level):
                 event.key == pygame.K_ESCAPE):
                 in_game = False
 
-            # --- Shifting on left/right keypress --- #
-
             if not (event.type == pygame.KEYDOWN and
                     tetrimino.lock_timer > 0):
                 continue
 
+            if event.key in c.DOWN_KEYS:
+                soft_drop_started = True
+
+                spawn_freeze_counter = 0
+
+            # --- Shifting on left/right keypress --- #
             if event.key in c.LEFT_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("left", dead_group.sprites())
                 DAS_counter = 0
+
+                spawn_freeze_counter = 0
 
             if event.key in c.RIGHT_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("right", dead_group.sprites())
                 DAS_counter = 0
 
+                spawn_freeze_counter = 0
+
             # --- Rotation on keypress --- #
             if event.key in c.CW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("cw", dead_group.sprites())
 
+                spawn_freeze_counter = 0
+
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("ccw", dead_group.sprites())
+
+                spawn_freeze_counter = 0
 
         if in_game == False:
             # Quit to menu
@@ -423,15 +442,18 @@ def start_game(start_level):
         # If DOWN is held
         for k in c.DOWN_KEYS:
             soft_drop = False
-            if keys[k]:
+            if keys[k] and soft_drop_started:
                 soft_drop = True
-                if tetrimino.lock_timer > 2: tetrimino.lock_timer = 2
+                if tetrimino.lock_timer > 2:
+                    tetrimino.lock_timer = 2
                 break
 
         if tetrimino.landed(dead_group.sprites()):
+            # If tetrimino has landed, start locking timer
             tetrimino.lock_timer -= 1
 
-        if tetrimino.lock_timer > 0 and (
+        # Make tetrimino fall
+        if tetrimino.lock_timer > 0 and spawn_freeze_counter <= 0 and (
             (soft_drop and frame_counter % 2 == 0) or (
             not soft_drop and frame_counter % c.frames_per_cell[level] == 0)
             ):
@@ -446,8 +468,16 @@ def start_game(start_level):
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
             next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
 
-        frame_counter += 1
+            soft_drop_started = False
+            spawn_freeze_counter = max_spawn_freeze
+
+        if spawn_freeze_counter > 0:
+            spawn_freeze_counter -= 1
+            frame_counter = 0
+        else:
+            frame_counter += 1
         clock.tick(FPS)
+        sys.stdout.write(f"      {spawn_freeze_counter}    \r") ### debug
         sys.stdout.write( ### performance monitoring
                 f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
                 + "\r")

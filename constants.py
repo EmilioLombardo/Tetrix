@@ -60,7 +60,7 @@ frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
 
 spawn_pos = array((4, -1))
 
-# Define the seven tetriminos. (0, 0) is anchor point for rotation
+# Define the seven tetriminos. (0, 0) is anchor point for (true) rotation
 tetriminos = (
         ((-1, 0), (0, -1), (0, 0), (1, 0)), # 	ID 0: T
         ((-1, -1), (-1, 0), (0, 0), (1, 0)), # 	ID 1: J
