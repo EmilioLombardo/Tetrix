@@ -471,6 +471,14 @@ def start_game(start_level):
 
         # --- Drawing stuff and updating screen --- #
 
+        # Make tetrimino flash when it locks
+        if -2 <= tetrimino.lock_timer <= 0:
+            tetrimino.sprite_list[:] = [
+                    spr.image.fill(c.WHITE) for spr in tetrimino.sprites()]
+        elif tetrimino.lock_timer <= -3:
+            tetrimino.sprites()[:] = [
+                    spr.image.fill(spr.colour) for spr in tetrimino.sprites()]
+
         update_display()
 
         # --- Spawning new tetrimino and next piece --- #
