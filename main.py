@@ -293,6 +293,8 @@ def menu(selected_lvl):
                 pygame.quit()
                 sys.exit()
 
+            # --- Level selection control --- #
+
             if event.key in c.RIGHT_KEYS:
                 selected_lvl = (selected_lvl + 1) % lvl_range
 
@@ -319,7 +321,7 @@ def start_game(start_level):
     pygame.key.set_repeat()
 
     max_spawn_freeze = 31 # Max freeze frames after piece has spawned
-                          # Freeze frames can be cancelled by any keypress
+                          # Freeze frames are cancelled by any keypress
 
     spawn_freeze_counter = max_spawn_freeze
     frame_counter = 1
@@ -358,7 +360,7 @@ def start_game(start_level):
         pygame.display.update(dirty_rects)
 
     screen.blit(bg, (0, 0))
-    draw_field_border(screen, c.GREY)
+    draw_field_border(bg, c.GREY)
     pygame.display.flip()
 
     in_game = True
@@ -423,7 +425,7 @@ def start_game(start_level):
 
         dir_held = None
 
-        # Check if LEFT is held
+        # Check if LEFT or RIGHT is held
         for L, R in zip(c.LEFT_KEYS, c.RIGHT_KEYS):
             if not (keys[L] == keys[R]):
                 # If only one direction is held
@@ -477,7 +479,7 @@ def start_game(start_level):
         else:
             frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write(f"      {spawn_freeze_counter}    \r") ### debug
+        sys.stdout.write(f"      {tetrimino.lock_timer}    \r") ### debug
         sys.stdout.write( ### performance monitoring
                 f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
                 + "\r")
