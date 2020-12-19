@@ -554,8 +554,8 @@ def start_game(start_level):
             tetrimino.clear(screen, bg)
             tetrimino.fall(dead_group)
 
-            # Update points
-            points += 1 if soft_drop else 0
+            # Pushdown points
+            points += 1
             # Update points text
             points_num_text = number_font.render(str(points), True, c.WHITE)
             draw_text(screen, bg, points_num_text, "right", 1)
