@@ -2,23 +2,23 @@ import pygame
 from numpy import array
 
 pygame.init()
-displayInfo = pygame.display.Info()
+display_info = pygame.display.Info()
 
-# width = displayInfo.current_w
-# height = displayInfo.current_h
+# width = display_info.current_w
+# height = display_info.current_h
 width = 750
 height = 750
 print(width, "x", height)
 
 COLS = 10
 ROWS = 20
-fieldWidth = 300
-fieldHeight = int(ROWS/COLS * fieldWidth)
+field_width = 300
+field_height = int(ROWS/COLS * field_width)
 fieldPos = ( # (x, y) for top-left corner of playing field
-    (width // 2) - (fieldWidth // 2),
-    (height // 2) - (fieldHeight // 2)
+    (width // 2) - (field_width // 2),
+    (height // 2) - (field_height // 2)
     )
-cellSize = fieldWidth // COLS
+cell_size = field_width // COLS
 
 DAS = 8 # Delayed auto-shift (frames)
 ARR = 3 # Auto repeat rate (in frames/cell)
