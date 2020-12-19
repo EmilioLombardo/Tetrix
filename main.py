@@ -257,6 +257,11 @@ draw_field_border(bg, c.GREY)
 FPS = 60
 clock = pygame.time.Clock()
 
+# Fonts
+title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
+info_font = pygame.font.Font("fonts/Montserrat-BoldItalic.ttf", 30)
+number_font = pygame.font.Font("fonts/Montserrat-Medium.ttf", 30)
+
 def randomiser(prev):
     # Randomiser with bias against same two pieces in a row
     # (This is the same randomiser used in NES Tetris)
@@ -270,7 +275,7 @@ def randomiser(prev):
 
 # ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
-    title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
+
     title_text = title_font.render("TETRIX", True, c.WHITE)
     pygame.key.set_repeat(300, 100)
 
@@ -355,15 +360,28 @@ def start_game(start_level):
     lines = 0
     points = 0
 
+    if c.frames_per_cell[level] > 3:
+        soft_drop_fpc = 2
+    else:
+        soft_drop_fpc = 1
     soft_drop = False # If True, piece falls and locks faster than normal
     soft_drop_started = False # True once DOWN is pressed (not just held).
                               # Resets with each new piece, so you have to
                               # repress DOWN to start a soft drop again.
 
+    points_text = info_font.render("POINTS", True, c.WHITE)
+    lines_text = info_font.render("LINES", True, c.WHITE)
+    level_text = info_font.render("LEVEL", True, c.WHITE)
+
+    points_num_text = number_font.render(str(points), True, c.WHITE)
+    lines_num_text = number_font.render(str(lines), True, c.WHITE)
+    level_num_text = number_font.render(str(level), True, c.WHITE)
+
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
     next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
     dead_group = pygame.sprite.LayeredDirty() # Sprite group for dead minos
+    dead_group.set_clip((*c.field_pos, c.field_width, c.field_height))
 
     def complete_rows(dead_minos):
         # Returns a list of which rows are filled in
@@ -381,6 +399,30 @@ def start_game(start_level):
 
         return complete_rows
 
+    def draw_text(dest_surf, bg_surf, text_render, side, row):
+        if side == "left":
+            text_pos = c.text_pos_left(row)
+        elif side == "right":
+            text_pos = c.text_pos_right(row)
+
+        w = c.left_txt_offset
+        h = text_render.get_height()
+
+        text_rect = (*text_pos, w, h)
+
+        # Draw bg over text
+        dest_surf.set_clip(text_rect)
+        dest_surf.blit(bg_surf, (0, 0))
+        dest_surf.set_clip()
+
+        # Draw text
+        dirty_rect = screen.blit(
+                        text_render,
+                        text_pos)
+
+        pygame.display.update(dirty_rect)
+        # return dirty_rect
+
     def update_display():
         dirty_rects = []
 
@@ -389,7 +431,20 @@ def start_game(start_level):
 
         pygame.display.update(dirty_rects)
 
+    # --- Draw all game screen stuff --- #
+
     screen.blit(bg, (0, 0))
+
+    # Points text
+    draw_text(screen, bg, points_text, "right", 0)
+    draw_text(screen, bg, points_num_text, "right", 1)
+    # Lines text
+    draw_text(screen, bg, lines_text, "left", 0)
+    draw_text(screen, bg, points_num_text, "left", 1)
+    # Level text
+    draw_text(screen, bg, level_text, "left", 3)
+    draw_text(screen, bg, level_num_text, "left", 4)
+
     pygame.display.flip()
 
     in_game = True
@@ -491,13 +546,23 @@ def start_game(start_level):
             tetrimino.lock_timer -= 1
 
         # Make tetrimino fall
-        if tetrimino.lock_timer > 0 and spawn_freeze_timer <= 0 and (
-            (soft_drop and frame_counter % 2 == 0) or (
-            not soft_drop and frame_counter % c.frames_per_cell[level] == 0)
-            ):
-            points += 1 if soft_drop else 0
+        if not (tetrimino.lock_timer > 0 and spawn_freeze_timer <= 0):
+            pass
+
+        elif not soft_drop and frame_counter % c.frames_per_cell[level] == 0:
             tetrimino.clear(screen, bg)
             tetrimino.fall(dead_group.sprites())
+
+        elif soft_drop and frame_counter % soft_drop_fpc == 0:
+            tetrimino.clear(screen, bg)
+            tetrimino.fall(dead_group.sprites())
+
+            # Update points
+            points += 1 if soft_drop else 0
+            # Update points text
+            points_num_text = number_font.render(str(points), True, c.WHITE)
+            draw_text(screen, bg, points_num_text, "right", 1)
+
 
         # --- Drawing stuff and updating screen --- #
 
@@ -592,8 +657,16 @@ def start_game(start_level):
                 # Finally, redraw all dead minos (some in their new positions)
                 pygame.display.update(dead_group.draw(screen))
 
-            lines += len(rows_to_clear)
-            points += c.clear_points[len(rows_to_clear)] * (level + 1)
+                lines += len(rows_to_clear)
+                points += c.clear_points[len(rows_to_clear)] * (level + 1)
+
+                # Update points and lines text
+                points_num_text = number_font.render(str(points), True, c.WHITE)
+                draw_text(screen, bg, points_num_text, "right", 1)
+
+                lines_num_text = number_font.render(str(lines), True, c.WHITE)
+                draw_text(screen, bg, lines_num_text, "left", 1)
+
 
             # --- Spawn new tetrimino and next piece --- #
 
@@ -622,7 +695,7 @@ def start_game(start_level):
         clock.tick(FPS)
         sys.stdout.write(f"        	{points}   \r") ### debug
         sys.stdout.write(f"    {tetrimino.lock_timer}   \r") ### debug
-        sys.stdout.write(f"{clock.get_rawtime()}\r") ### performance monitoring
+        sys.stdout.write(f"{clock.get_rawtime() if clock.get_rawtime() > 16 else ''}\r") ### performance monitoring
 
 
 menu(0)

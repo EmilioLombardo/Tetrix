@@ -58,6 +58,21 @@ frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
 clear_points = [0, 40, 100, 300, 1200]
     # 1 line: 40 points, 2 lines: 300 points etc.
 
+# ------ Text stuff ------ #
+margin = 40
+space = 40
+left_txt_offset = 130 + margin
+
+text_pos_left = lambda row: (
+        field_pos[0] - left_txt_offset,
+        field_pos[1] + margin + row * space
+        )
+text_pos_right = lambda row: (
+        field_pos[0] + field_width + margin,
+        field_pos[1] + margin + row * space
+        )
+
+
 # ------ SRS stuff ------ #
 
 # https://harddrop.com/wiki/SRS
