@@ -58,7 +58,7 @@ class Mino(pygame.sprite.DirtySprite):
 
         self.image = pygame.Surface((self.w, self.w))
         self.image.fill(self.colour)
-        self.rect = (self.pixel_x, self.pixel_y, self.w, self.w)
+        self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.w)
 
     def update(self):
         prev = self.image, self.rect
@@ -67,7 +67,7 @@ class Mino(pygame.sprite.DirtySprite):
 
         self.pixel_x, self.pixel_y = self.grid_to_pixel(self.grid_x,
                                                         self.grid_y)
-        self.rect = (self.pixel_x, self.pixel_y, self.w, self.w)
+        self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.w)
 
         curr = self.image, self.rect
 
@@ -343,7 +343,7 @@ def start_game(start_level):
     DAS_counter = 0 # For control of horisontal movement delays
     level = start_level
 
-    soft_drop = False # If True, piece falls faster than normal
+    soft_drop = False # If True, piece falls and locks faster than normal
     soft_drop_started = False # True once DOWN is pressed (not just held).
                               # Resets with each new piece, so you have to
                               # repress DOWN to start a soft drop again.
@@ -352,6 +352,22 @@ def start_game(start_level):
     next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
 
     dead_group = pygame.sprite.LayeredDirty()
+
+    def complete_rows(dead_minos):
+        # Returns a list of which rows are filled in
+
+        complete_rows = []
+
+        for row_n in range(c.ROWS):
+            dead_minos_in_row = [
+                    d for d in dead_minos
+                    if d.grid_y == row_n
+                    ]
+
+            if len(dead_minos_in_row) >= c.COLS:
+                complete_rows.append(row_n)
+
+        return complete_rows
 
     def update_display():
         dirty_rects = []
@@ -459,8 +475,8 @@ def start_game(start_level):
 
                 break
 
+        # If tetrimino has landed, start locking timer
         if tetrimino.landed(dead_group.sprites()):
-            # If tetrimino has landed, start locking timer
             tetrimino.lock_timer -= 1
 
         # Make tetrimino fall
@@ -475,18 +491,87 @@ def start_game(start_level):
 
         # Make tetrimino flash when it locks
         if -2 <= tetrimino.lock_timer <= 0:
-            tetrimino.sprite_list[:] = [
-                    spr.image.fill(c.WHITE) for spr in tetrimino.sprites()]
+            for spr in tetrimino.sprites():
+                spr.image.fill(c.WHITE)
+
         elif tetrimino.lock_timer <= -3:
-            tetrimino.sprites()[:] = [
-                    spr.image.fill(spr.colour) for spr in tetrimino.sprites()]
+            for spr in tetrimino.sprites():
+                spr.image.fill(spr.colour)
 
         update_display()
 
-        # --- Spawning new tetrimino and next piece --- #
-
+        # After tetrimino has locked and flashed
         if tetrimino.lock_timer <= -4:
             dead_group.add(tetrimino.sprites())
+
+            # --- Line clearing w/ animation --- #
+
+            rows_to_clear = complete_rows(dead_group)
+
+            if len(rows_to_clear) != 0:
+                dead_minos_above = []
+
+                for row_n in rows_to_clear:
+                    dead_minos_above += [
+                            d for d in dead_group
+                            if (d.grid_y < row_n and
+                                d.grid_y not in rows_to_clear and
+                                d not in dead_minos_above)
+                            ]
+
+                # Animation
+
+                x = c.fieldPos[0] + c.fieldWidth // 2 - 1
+                w = 2
+                step = c.fieldWidth / 50
+                while x >= c.fieldPos[0]:
+                    dirty_rects = []
+
+                    for row_n in rows_to_clear:
+                        y = c.fieldPos[1] + row_n * c.cellSize
+                        rectangle = pygame.Rect(x, y, w, c.cellSize)
+                        dirty_rects.append(
+                                pygame.draw.rect(screen,
+                                        c.BLUE_GRAY,
+                                        rectangle))
+
+                    pygame.display.update(dirty_rects)
+
+                    w += 2 * step
+                    x -= step
+
+                    clock.tick(FPS)
+
+                # Erase all dead minos from the screen before moving any
+                dead_group.clear(screen, bg)
+
+                # Remove dead minos in cleared rows from dead_group
+                dead_minos_to_remove = [
+                        d for d in dead_group
+                        if d.grid_y in rows_to_clear
+                        ]
+
+                dead_group.remove(dead_minos_to_remove)
+
+                # Update display to reflect erasing of all dead minos
+                pygame.display.update(dead_group.draw(screen))
+
+                # Move dead minos above the cleared rows down
+                for d in dead_minos_above:
+                    displacement = 0
+                    for row_n in rows_to_clear:
+                        if d.grid_y < row_n:
+                            # If mino is above a cleared row
+                            displacement += 1
+
+                    d.grid_y += displacement
+                    d.update()
+
+                # Finally, redraw all dead minos (some in their new positions)
+                pygame.display.update(dead_group.draw(screen))
+
+            # --- Spawn new tetrimino and next piece --- #
+
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
             next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
@@ -502,11 +587,9 @@ def start_game(start_level):
         else:
             frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write(f"		{spawn_freeze_timer}    \r") ### debug
-        sys.stdout.write(f"	{tetrimino.lock_timer}    \r") ### debug
-        sys.stdout.write( ### performance monitoring
-                f"{clock.get_rawtime() if clock.get_rawtime() > 16 else '   '}"
-                + "\r")
+        sys.stdout.write(f"        {spawn_freeze_timer}   \r") ### debug
+        sys.stdout.write(f"    {tetrimino.lock_timer}   \r") ### debug
+        sys.stdout.write(f"{clock.get_rawtime()}\r") ### performance monitoring
 
 
 menu(0)
