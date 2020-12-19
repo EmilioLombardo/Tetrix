@@ -607,7 +607,7 @@ def start_game(start_level):
 
                 x = c.field_pos[0] + c.field_width // 2 - 1
                 w = 2
-                step = c.field_width / 50
+                step = c.field_width / 42
                 while x >= c.field_pos[0]:
                     dirty_rects = []
 
