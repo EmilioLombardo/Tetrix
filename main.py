@@ -657,14 +657,25 @@ def start_game(start_level):
                 # Finally, redraw all dead minos (some in their new positions)
                 pygame.display.update(dead_group.draw(screen))
 
+                # Update points, lines and level variables
                 lines += len(rows_to_clear)
                 points += c.clear_points[len(rows_to_clear)] * (level + 1)
+                if lines // 10 > level:
+                    level += 1
+                    if c.frames_per_cell[level] <= 3:
+                        soft_drop_fpc = 1
+
+                    level_num_text = number_font.render(
+                            str(level), True, c.WHITE)
+                    draw_text(screen, bg, level_num_text, "left", 4)
 
                 # Update points and lines text
-                points_num_text = number_font.render(str(points), True, c.WHITE)
+                points_num_text = number_font.render(
+                        str(points), True, c.WHITE)
                 draw_text(screen, bg, points_num_text, "right", 1)
 
-                lines_num_text = number_font.render(str(lines), True, c.WHITE)
+                lines_num_text = number_font.render(
+                        str(lines), True, c.WHITE)
                 draw_text(screen, bg, lines_num_text, "left", 1)
 
 
