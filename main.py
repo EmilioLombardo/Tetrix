@@ -400,10 +400,7 @@ def start_game(start_level):
         return complete_rows
 
     def draw_text(dest_surf, bg_surf, text_render, side, row):
-        if side == "left":
-            text_pos = c.text_pos_left(row)
-        elif side == "right":
-            text_pos = c.text_pos_right(row)
+        text_pos = c.text_position[side](row)
 
         w = c.left_txt_offset
         h = text_render.get_height()
@@ -475,7 +472,7 @@ def start_game(start_level):
             # --- Shifting on LEFT/RIGHT keypress --- #
             if event.key in c.LEFT_KEYS:
                 tetrimino.clear(screen, bg)
-                tetrimino.shift("left", dead_group.sprites())
+                tetrimino.shift("left", dead_group)
                 DAS_counter = 0
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
@@ -483,7 +480,7 @@ def start_game(start_level):
 
             if event.key in c.RIGHT_KEYS:
                 tetrimino.clear(screen, bg)
-                tetrimino.shift("right", dead_group.sprites())
+                tetrimino.shift("right", dead_group)
                 DAS_counter = 0
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
@@ -492,17 +489,17 @@ def start_game(start_level):
             # --- Rotation on keypress --- #
             if event.key in c.CW_KEYS:
                 tetrimino.clear(screen, bg)
-                tetrimino.rotate("cw", dead_group.sprites())
+                tetrimino.rotate("cw", dead_group)
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                            spawn_freeze_timer)
 
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
-                tetrimino.rotate("ccw", dead_group.sprites())
+                tetrimino.rotate("ccw", dead_group)
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
-                                           spawn_freeze_timer)
+                                         spawn_freeze_timer)
 
         if in_game == False:
             # Quit to menu
@@ -525,7 +522,7 @@ def start_game(start_level):
             DAS_counter += 1
             if DAS_counter == c.DAS:
                 tetrimino.clear(screen, bg)
-                tetrimino.shift(dir_held, dead_group.sprites())
+                tetrimino.shift(dir_held, dead_group)
                 DAS_counter = c.DAS - c.ARR
 
         # --- Falling and landing --- #
@@ -542,7 +539,7 @@ def start_game(start_level):
                 break
 
         # If tetrimino has landed, start locking timer
-        if tetrimino.landed(dead_group.sprites()):
+        if tetrimino.landed(dead_group):
             tetrimino.lock_timer -= 1
 
         # Make tetrimino fall
@@ -551,11 +548,11 @@ def start_game(start_level):
 
         elif not soft_drop and frame_counter % c.frames_per_cell[level] == 0:
             tetrimino.clear(screen, bg)
-            tetrimino.fall(dead_group.sprites())
+            tetrimino.fall(dead_group)
 
         elif soft_drop and frame_counter % soft_drop_fpc == 0:
             tetrimino.clear(screen, bg)
-            tetrimino.fall(dead_group.sprites())
+            tetrimino.fall(dead_group)
 
             # Update points
             points += 1 if soft_drop else 0
@@ -568,11 +565,11 @@ def start_game(start_level):
 
         # Make tetrimino flash when it locks
         if -2 <= tetrimino.lock_timer <= 0:
-            for spr in tetrimino.sprites():
+            for spr in tetrimino:
                 spr.image.fill(c.WHITE)
 
         elif tetrimino.lock_timer <= -3:
-            for spr in tetrimino.sprites():
+            for spr in tetrimino:
                 spr.image.fill(spr.colour)
 
         update_display()
@@ -587,7 +584,7 @@ def start_game(start_level):
                 menu(start_level)
                 break
 
-            dead_group.add(tetrimino.sprites())
+            dead_group.add(tetrimino)
 
             # --- Line clearing w/ animation --- #
 

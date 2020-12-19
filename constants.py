@@ -63,14 +63,13 @@ margin = 40
 space = 40
 left_txt_offset = 130 + margin
 
-text_pos_left = lambda row: (
-        field_pos[0] - left_txt_offset,
-        field_pos[1] + margin + row * space
-        )
-text_pos_right = lambda row: (
-        field_pos[0] + field_width + margin,
-        field_pos[1] + margin + row * space
-        )
+text_position = {
+        "left" : lambda row: (field_pos[0] - left_txt_offset,
+                              field_pos[1] + margin + row * space),
+
+        "right" : lambda row: (field_pos[0] + field_width + margin,
+                               field_pos[1] + margin + row * space)
+        }
 
 
 # ------ SRS stuff ------ #
