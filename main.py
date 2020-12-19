@@ -352,6 +352,8 @@ def start_game(start_level):
     frame_counter = 1
     DAS_counter = 0 # For control of horisontal movement delays
     level = start_level # Controls falling speed and point bonuses
+    lines = 0
+    points = 0
 
     soft_drop = False # If True, piece falls and locks faster than normal
     soft_drop_started = False # True once DOWN is pressed (not just held).
@@ -493,6 +495,7 @@ def start_game(start_level):
             (soft_drop and frame_counter % 2 == 0) or (
             not soft_drop and frame_counter % c.frames_per_cell[level] == 0)
             ):
+            points += 1 if soft_drop else 0
             tetrimino.clear(screen, bg)
             tetrimino.fall(dead_group.sprites())
 
@@ -589,6 +592,9 @@ def start_game(start_level):
                 # Finally, redraw all dead minos (some in their new positions)
                 pygame.display.update(dead_group.draw(screen))
 
+            lines += len(rows_to_clear)
+            points += c.clear_points[len(rows_to_clear)] * (level + 1)
+
             # --- Spawn new tetrimino and next piece --- #
 
             next_piece.clear(screen, bg)
@@ -614,7 +620,7 @@ def start_game(start_level):
         else:
             frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write(f"        {spawn_freeze_timer}   \r") ### debug
+        sys.stdout.write(f"        	{points}   \r") ### debug
         sys.stdout.write(f"    {tetrimino.lock_timer}   \r") ### debug
         sys.stdout.write(f"{clock.get_rawtime()}\r") ### performance monitoring
 

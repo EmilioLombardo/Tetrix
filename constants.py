@@ -54,6 +54,10 @@ frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
                  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                  1]
 
+# Point rewards for line clears
+clear_points = [0, 40, 100, 300, 1200]
+    # 1 line: 40 points, 2 lines: 300 points etc.
+
 # ------ SRS stuff ------ #
 
 # https://harddrop.com/wiki/SRS
