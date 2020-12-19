@@ -14,7 +14,7 @@ COLS = 10
 ROWS = 20
 field_width = 300
 field_height = int(ROWS/COLS * field_width)
-fieldPos = ( # (x, y) for top-left corner of playing field
+field_pos = ( # (x, y) for top-left corner of playing field
     (width // 2) - (field_width // 2),
     (height // 2) - (field_height // 2)
     )

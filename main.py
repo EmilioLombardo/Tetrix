@@ -43,8 +43,8 @@ class Mino(pygame.sprite.DirtySprite):
     w = c.cell_size
 
     def grid_to_pixel(cls, grid_x, grid_y):
-        pixel_x = c.cell_size * grid_x + c.fieldPos[0]
-        pixel_y = c.cell_size * grid_y + c.fieldPos[1]
+        pixel_x = c.cell_size * grid_x + c.field_pos[0]
+        pixel_y = c.cell_size * grid_y + c.field_pos[1]
         return pixel_x, pixel_y
 
     def __init__(self, colour, x, y):
@@ -236,10 +236,10 @@ pygame.display.set_caption("Tetrix")
 
 # Make background
 def draw_field_border(surface, colour):
-    x0 = c.fieldPos[0] - 1
-    y0 = c.fieldPos[1]
-    x1 = c.fieldPos[0] + c.field_width
-    y1 = c.fieldPos[1] + c.field_height
+    x0 = c.field_pos[0] - 1
+    y0 = c.field_pos[1]
+    x1 = c.field_pos[0] + c.field_width
+    y1 = c.field_pos[1] + c.field_height
 
     pygame.draw.line(surface, colour,
                      (x0, y0), (x0, y1))
@@ -543,14 +543,14 @@ def start_game(start_level):
 
                 # Animation
 
-                x = c.fieldPos[0] + c.field_width // 2 - 1
+                x = c.field_pos[0] + c.field_width // 2 - 1
                 w = 2
                 step = c.field_width / 50
-                while x >= c.fieldPos[0]:
+                while x >= c.field_pos[0]:
                     dirty_rects = []
 
                     for row_n in rows_to_clear:
-                        y = c.fieldPos[1] + row_n * c.cell_size
+                        y = c.field_pos[1] + row_n * c.cell_size
                         rectangle = pygame.Rect(x, y, w, c.cell_size)
                         dirty_rects.append(
                                 pygame.draw.rect(screen,
