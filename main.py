@@ -234,7 +234,7 @@ flags = pygame.DOUBLEBUF #| pygame.FULLSCREEN
 screen = pygame.display.set_mode((c.width, c.height), flags)
 pygame.display.set_caption("Tetrix")
 
-# Fill background
+# Make background
 def draw_field_border(surface, colour):
     x0 = c.fieldPos[0] - 1
     y0 = c.fieldPos[1]
@@ -351,7 +351,7 @@ def start_game(start_level):
     spawn_freeze_timer = max_spawn_freeze
     frame_counter = 1
     DAS_counter = 0 # For control of horisontal movement delays
-    level = start_level
+    level = start_level # Controls falling speed and point bonuses
 
     soft_drop = False # If True, piece falls and locks faster than normal
     soft_drop_started = False # True once DOWN is pressed (not just held).
@@ -361,7 +361,7 @@ def start_game(start_level):
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
     next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
-    dead_group = pygame.sprite.LayeredDirty()
+    dead_group = pygame.sprite.LayeredDirty() # Sprite group for dead minos
 
     def complete_rows(dead_minos):
         # Returns a list of which rows are filled in
@@ -388,7 +388,6 @@ def start_game(start_level):
         pygame.display.update(dirty_rects)
 
     screen.blit(bg, (0, 0))
-    draw_field_border(screen, c.GREY)
     pygame.display.flip()
 
     in_game = True
@@ -512,6 +511,14 @@ def start_game(start_level):
 
         # After tetrimino has locked and flashed
         if tetrimino.lock_timer <= -4:
+            # If the tetrimino locks above the playing field; Game over :o
+            if max(tetrimino.minos[:,1]) < 0:
+                update_display()
+                for _ in range(30): clock.tick(FPS)
+                in_game = False
+                menu(start_level)
+                break
+
             dead_group.add(tetrimino.sprites())
 
             # --- Line clearing w/ animation --- #
@@ -590,6 +597,14 @@ def start_game(start_level):
 
             soft_drop_started = False
             spawn_freeze_timer = max_spawn_freeze
+
+            # If the new piece spawns overlapping any dead minos; Game over :o
+            if tetrimino.colliding(dead_group):
+                update_display()
+                for _ in range(30): clock.tick(FPS)
+                in_game = False
+                menu(start_level)
+                break
 
         # --- Time stuff --- #
 
