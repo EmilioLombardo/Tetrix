@@ -257,6 +257,16 @@ draw_field_border(bg, c.GREY)
 FPS = 60
 clock = pygame.time.Clock()
 
+def randomiser(prev):
+    # Randomiser with bias against same two pieces in a row
+    # (This is the same randomiser used in NES Tetris)
+
+    roll = random.randint(0, len(c.tetriminos)) # 0-7
+
+    if roll == len(c.tetriminos) or roll == prev:
+        roll = random.randint(0, len(c.tetriminos) - 1) # 0-6
+
+    return roll # A value 0-6
 
 # ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
@@ -349,7 +359,7 @@ def start_game(start_level):
                               # repress DOWN to start a soft drop again.
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
-    next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
+    next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
     dead_group = pygame.sprite.LayeredDirty()
 
@@ -576,7 +586,7 @@ def start_game(start_level):
 
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
-            next_piece = Tetrimino(random.randint(0, 6), array((12.5, 10)))
+            next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
             soft_drop_started = False
             spawn_freeze_timer = max_spawn_freeze
