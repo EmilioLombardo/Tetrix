@@ -4,6 +4,8 @@ from numpy import array
 pygame.init()
 display_info = pygame.display.Info()
 
+# ------ Display stuff and playing field dimensions ------ #
+
 # width = display_info.current_w
 # height = display_info.current_h
 width = 750
@@ -24,8 +26,7 @@ field_rect = pygame.Rect(field_pos[0],
                          field_width,
                          field_height + 2 * cell_size)
 
-DAS = 8 # Delayed auto-shift (frames)
-ARR = 3 # Auto repeat rate (in frames/cell)
+# ------ Controls ------ #
 
 UP_KEYS = [pygame.K_UP, pygame.K_w]
 DOWN_KEYS = [pygame.K_DOWN, pygame.K_s]
@@ -38,7 +39,8 @@ CCW_KEYS = [pygame.K_j, pygame.K_z, pygame.K_COMMA]
 CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_k]
 PAUSE_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_TAB]
 
-# Define some colours
+# ------ Colours ------ #
+
 PURPLE = (180, 40, 140)
 BLUE = (40, 80, 230)
 GREEN = (40, 225, 20)
@@ -53,16 +55,6 @@ BLUE_GRAY = (17, 28, 36)
 # What colours to use for the various tetriminos. Index represents piece type
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
-# Falling speeds for different levels
-frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
-                 9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
-                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                 1]
-
-# Point rewards for line clears
-clear_points = [0, 40, 100, 300, 1200]
-    # 1 line: 40 points, 2 lines: 300 points etc.
-
 # ------ Text stuff ------ #
 margin = 40
 space = 40
@@ -76,9 +68,12 @@ text_position = {
                                field_pos[1] + margin + row * space)
         }
 
+# ------ Point rewards for line clears ------ #
 
-# ------ SRS stuff ------ #
+clear_points = [0, 40, 100, 300, 1200]
+    # 1 line: 40 points, 2 lines: 300 points etc.
 
+# ------ Spawning, shifting and SRS stuff ------ #
 # https://harddrop.com/wiki/SRS
 
 spawn_pos = array((4, -1))
@@ -94,7 +89,16 @@ tetriminos = (
         ((-1, 0), (0, 0), (1, 0), (2, 0)) # 	ID 6: I
 )
 
-# Offset data
+DAS = 8 # Delayed Auto-Shift (frames)
+ARR = 3 # Auto Repeat Rate (in frames/cell)
+
+# Falling speeds for different levels
+frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
+                 9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
+                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                 1]
+
+# --- SRS offset data --- #
 
 offsets_TJZSL = array((
         (( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0)), # 	Rot 0 (spawn)
@@ -116,9 +120,3 @@ offsets_O = array((
         ((-1,+1),), # 	Rot 2
         ((-1, 0),) #	Rot L
 ))
-
-### 14 + 14 + 14 -- line clear animation
-### 32 -- lock delay
-### 4 -- locking animation before next spawn
-### max 31 -- freeze frames after spawn, set to 0 when any key is pressed
-### (after freeze frames comes fall delay)

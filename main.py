@@ -227,14 +227,14 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
 # ------ Setup ------ #
 
-# Initialise screen
+# --- Initialise screen --- #
 pygame.init()
 flags = pygame.DOUBLEBUF #| pygame.FULLSCREEN
 # screen = pygame.display.set_mode((0, 0), flags)
 screen = pygame.display.set_mode((c.width, c.height), flags)
 pygame.display.set_caption("Tetrix")
 
-# Make background
+# --- Make background --- #
 def draw_field_border(surface, colour):
     x0 = c.field_pos[0] - 1
     y0 = c.field_pos[1]
@@ -253,11 +253,11 @@ bg = bg.convert()
 bg.fill(c.BLUE_GRAY)
 draw_field_border(bg, c.GREY)
 
-# ØØØØØ
+# --- Global timing stuff --- #
 FPS = 60
 clock = pygame.time.Clock()
 
-# Fonts
+# --- Fonts --- #
 title_font = pygame.font.Font("fonts/Montserrat-Black.ttf", 60)
 info_font = pygame.font.Font("fonts/Montserrat-BoldItalic.ttf", 30)
 number_font = pygame.font.Font("fonts/Montserrat-Medium.ttf", 30)
@@ -352,21 +352,21 @@ def start_game(start_level):
 
     # --- Game variables --- #
 
-    max_spawn_freeze = 31 # Max freeze frames after piece has spawned
+    max_spawn_freeze = 31 # Max freeze frames after piece has spawned.
                           # Freeze frames are cancelled by any keypress
 
     spawn_freeze_timer = max_spawn_freeze
     frame_counter = 1
-    DAS_counter = 0 # For control of horisontal movement delays
+    DAS_counter = 0 # For control of horisontal auto-shift delays
     level = start_level # Controls falling speed and point bonuses
     lines = 0
     points = 0
 
-    # Soft drop falling speed in frames per cell
     if c.frames_per_cell[level] > 3:
-        soft_drop_fpc = 2
+        soft_drop_fpc = 2 # Soft drop falling speed in frames per cell
     else:
         soft_drop_fpc = 1
+
     soft_drop = False # If True, piece falls and locks faster than normal
 
     # --- Text initialisation and drawing --- #
@@ -521,7 +521,7 @@ def start_game(start_level):
                 tetrimino.rotate("cw", dead_group)
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
-                                           spawn_freeze_timer)
+                                         spawn_freeze_timer)
 
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
