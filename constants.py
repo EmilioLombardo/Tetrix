@@ -19,6 +19,10 @@ field_pos = ( # (x, y) for top-left corner of playing field
     (height // 2) - (field_height // 2)
     )
 cell_size = field_width // COLS
+field_rect = pygame.Rect(field_pos[0],
+                         field_pos[1] - 2 * cell_size,
+                         field_width,
+                         field_height + 2 * cell_size)
 
 DAS = 8 # Delayed auto-shift (frames)
 ARR = 3 # Auto repeat rate (in frames/cell)
@@ -32,6 +36,7 @@ CW_KEYS = [pygame.K_UP, pygame.K_w, pygame.K_k, pygame.K_x, pygame.K_PERIOD]
 CCW_KEYS = [pygame.K_j, pygame.K_z, pygame.K_COMMA]
 
 CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_k]
+PAUSE_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_TAB]
 
 # Define some colours
 PURPLE = (180, 40, 140)
