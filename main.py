@@ -467,8 +467,8 @@ def start_game(start_level):
                 if not paused:
                     dead_group.repaint_rect(screen.get_rect())
                     pygame.display.update(dead_group.draw(screen))
-                    pass
                 else:
+                    next_piece.clear(screen, bg)
                     # Draw over the entire field with bg colour
                     pygame.display.update(
                             pygame.draw.rect(
