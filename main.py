@@ -350,6 +350,8 @@ def start_game(start_level):
 
     pygame.key.set_repeat()
 
+    # --- Game variables --- #
+
     max_spawn_freeze = 31 # Max freeze frames after piece has spawned
                           # Freeze frames are cancelled by any keypress
 
@@ -360,6 +362,7 @@ def start_game(start_level):
     lines = 0
     points = 0
 
+    # Soft drop falling speed in frames per cell
     if c.frames_per_cell[level] > 3:
         soft_drop_fpc = 2
     else:
@@ -369,6 +372,8 @@ def start_game(start_level):
                               # Resets with each new piece, so you have to
                               # repress DOWN to start a soft drop again.
 
+    # --- Text initialisation and drawing --- #
+
     points_text = info_font.render("POINTS", True, c.WHITE)
     lines_text = info_font.render("LINES", True, c.WHITE)
     level_text = info_font.render("LEVEL", True, c.WHITE)
@@ -377,6 +382,8 @@ def start_game(start_level):
     points_num_text = number_font.render(str(points), True, c.WHITE)
     lines_num_text = number_font.render(str(lines), True, c.WHITE)
     level_num_text = number_font.render(str(level), True, c.WHITE)
+
+    # --- Tetrimino, next piece and dead mino sprite group --- #
 
     tetrimino = Tetrimino(random.randint(0, 6), c.spawn_pos)
     next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
@@ -448,9 +455,11 @@ def start_game(start_level):
 
     pygame.display.flip()
 
+    # --- Game loop --- #
+
     paused = False
     in_game = True
-    while in_game: # Game loop
+    while in_game:
 
         events = pygame.event.get()
         for event in events:
@@ -476,9 +485,7 @@ def start_game(start_level):
                     # Draw over the entire field with bg colour
                     pygame.display.update(
                             pygame.draw.rect(
-                                    screen, c.BLUE_GRAY, c.field_rect
-                            )
-                    )
+                                    screen, c.BLUE_GRAY, c.field_rect))
                     continue
 
             if not (event.type == pygame.KEYDOWN and
