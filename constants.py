@@ -39,6 +39,14 @@ CCW_KEYS = [pygame.K_j, pygame.K_z, pygame.K_COMMA]
 CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_k]
 PAUSE_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_TAB]
 
+# ------ Sounds ------ #
+rot_sound = pygame.mixer.Sound("sounds/rot_sound.wav")
+shift_sound = pygame.mixer.Sound("sounds/shift_sound.wav")
+lock_sound = pygame.mixer.Sound("sounds/lock_sound.wav")
+clear_sound = pygame.mixer.Sound("sounds/clear_sound.wav")
+tetris_sound = pygame.mixer.Sound("sounds/tetris_sound.wav")
+level_up_sound = pygame.mixer.Sound("sounds/level_up_sound.wav")
+
 # ------ Colours ------ #
 
 PURPLE = (180, 40, 140)

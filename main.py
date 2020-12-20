@@ -226,9 +226,10 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
 
 # ------ Setup ------ #
+pygame.mixer.pre_init(buffer=32)
+pygame.init()
 
 # --- Initialise screen --- #
-pygame.init()
 flags = pygame.DOUBLEBUF #| pygame.FULLSCREEN
 # screen = pygame.display.set_mode((0, 0), flags)
 screen = pygame.display.set_mode((c.width, c.height), flags)
@@ -339,6 +340,7 @@ def menu(selected_lvl):
 
             if event.key in c.CONFIRM_KEYS:
                 on_menu_screen = False
+                c.level_up_sound.play()
                 start_game(selected_lvl)
 
         level_icons[selected_lvl].selected = True
@@ -500,6 +502,7 @@ def start_game(start_level):
 
             # --- Shifting on LEFT/RIGHT keypress --- #
             if event.key in c.LEFT_KEYS:
+                c.shift_sound.play(maxtime=60)
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("left", dead_group)
                 DAS_counter = 0
@@ -508,6 +511,7 @@ def start_game(start_level):
                                            spawn_freeze_timer)
 
             if event.key in c.RIGHT_KEYS:
+                c.shift_sound.play(maxtime=60)
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("right", dead_group)
                 DAS_counter = 0
@@ -519,6 +523,7 @@ def start_game(start_level):
             if event.key in c.CW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("cw", dead_group)
+                c.rot_sound.play(maxtime=100)
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                          spawn_freeze_timer)
@@ -526,6 +531,7 @@ def start_game(start_level):
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("ccw", dead_group)
+                c.rot_sound.play(maxtime=100)
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                          spawn_freeze_timer)
@@ -553,9 +559,13 @@ def start_game(start_level):
         if dir_held and tetrimino.lock_timer > 0:
             DAS_counter += 1
             if DAS_counter == c.DAS:
+                prev_pos = tetrimino.centre_pos.copy()
                 tetrimino.clear(screen, bg)
                 tetrimino.shift(dir_held, dead_group)
                 DAS_counter = c.DAS - c.ARR
+                if list(prev_pos) != list(tetrimino.centre_pos):
+                    # If tetrimino has actually moved, play shift sonud
+                    c.shift_sound.play(maxtime=60)
 
         # --- Falling and landing --- #
 
@@ -589,7 +599,8 @@ def start_game(start_level):
         # --- Drawing stuff and updating screen --- #
 
         # Make tetrimino flash when it locks
-        if -2 <= tetrimino.lock_timer <= 0:
+        if tetrimino.lock_timer == 0:
+            c.lock_sound.play(maxtime=500)
             for spr in tetrimino:
                 spr.image.fill(c.WHITE)
 
@@ -619,6 +630,10 @@ def start_game(start_level):
 
             if len(rows_to_clear) != 0:
                 # If there are any rows to clear
+                if len(rows_to_clear) == 4:
+                    c.tetris_sound.play()
+                else:
+                    c.clear_sound.play()
 
                 dead_minos_above = []
 
@@ -686,6 +701,7 @@ def start_game(start_level):
                 points += c.clear_points[len(rows_to_clear)] * (level + 1)
                 if lines // 10 > level:
                     level += 1
+                    c.level_up_sound.play()
                     if c.frames_per_cell[level] <= 3:
                         soft_drop_fpc = 1
 
