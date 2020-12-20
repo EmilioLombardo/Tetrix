@@ -381,7 +381,7 @@ def start_game(start_level):
     next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
     dead_group = pygame.sprite.LayeredDirty() # Sprite group for dead minos
-    dead_group.set_clip((*c.field_pos, c.field_width, c.field_height))
+    dead_group.set_clip(c.field_rect)
 
     def complete_rows(dead_minos):
         # Returns a list of which rows are filled in
@@ -444,6 +444,7 @@ def start_game(start_level):
 
     pygame.display.flip()
 
+    paused = False
     in_game = True
     while in_game: # Game loop
 
@@ -458,6 +459,23 @@ def start_game(start_level):
             if (event.type == pygame.KEYDOWN and
                 event.key == pygame.K_ESCAPE):
                 in_game = False
+
+            # Pausing
+            if (event.type == pygame.KEYDOWN and
+                event.key in c.PAUSE_KEYS):
+                paused = (False == paused) # Toggle True/False
+                if not paused:
+                    dead_group.repaint_rect(screen.get_rect())
+                    pygame.display.update(dead_group.draw(screen))
+                    pass
+                else:
+                    # Draw over the entire field with bg colour
+                    pygame.display.update(
+                            pygame.draw.rect(
+                                    screen, c.BLUE_GRAY, c.field_rect
+                            )
+                    )
+                    continue
 
             if not (event.type == pygame.KEYDOWN and
                     tetrimino.lock_timer > 0):
@@ -501,10 +519,13 @@ def start_game(start_level):
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                          spawn_freeze_timer)
 
-        if in_game == False:
+        if not in_game:
             # Quit to menu
             menu(start_level)
             break
+
+        if paused:
+            continue
 
         # --- Manage auto-shift --- #
         keys = pygame.key.get_pressed()
