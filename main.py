@@ -368,9 +368,6 @@ def start_game(start_level):
     else:
         soft_drop_fpc = 1
     soft_drop = False # If True, piece falls and locks faster than normal
-    soft_drop_started = False # True once DOWN is pressed (not just held).
-                              # Resets with each new piece, so you have to
-                              # repress DOWN to start a soft drop again.
 
     # --- Text initialisation and drawing --- #
 
@@ -487,14 +484,18 @@ def start_game(start_level):
                                     screen, c.BLUE_GRAY, c.field_rect))
                     continue
 
+            # --- Register DOWN release for soft drop control --- #
+            if (event.type == pygame.KEYUP and
+                event.key in c.DOWN_KEYS):
+                soft_drop = False
+
             if not (event.type == pygame.KEYDOWN and
                     tetrimino.lock_timer > 0):
                 continue
 
             # --- Register DOWN press for soft drop control --- #
             if event.key in c.DOWN_KEYS:
-                soft_drop_started = True
-
+                soft_drop = True
                 spawn_freeze_timer = 0
 
             # --- Shifting on LEFT/RIGHT keypress --- #
@@ -558,16 +559,8 @@ def start_game(start_level):
 
         # --- Falling and landing --- #
 
-        # Check if DOWN is held
-        for k in c.DOWN_KEYS:
-            soft_drop = False
-            if keys[k] and soft_drop_started:
-                # Activate soft drop and make lock delay short
-                soft_drop = True
-                if tetrimino.lock_timer > 2:
-                    tetrimino.lock_timer = 2
-
-                break
+        if soft_drop and tetrimino.lock_timer > 2:
+            tetrimino.lock_timer = 2
 
         # If tetrimino has landed, start locking timer
         if tetrimino.landed(dead_group):
@@ -618,6 +611,7 @@ def start_game(start_level):
                 break
 
             dead_group.add(tetrimino)
+            soft_drop = False
 
             # --- Line clearing w/ animation --- #
 
