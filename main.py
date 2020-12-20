@@ -372,6 +372,7 @@ def start_game(start_level):
     points_text = info_font.render("POINTS", True, c.WHITE)
     lines_text = info_font.render("LINES", True, c.WHITE)
     level_text = info_font.render("LEVEL", True, c.WHITE)
+    next_text = info_font.render("NEXT", True, c.WHITE)
 
     points_num_text = number_font.render(str(points), True, c.WHITE)
     lines_num_text = number_font.render(str(lines), True, c.WHITE)
@@ -435,12 +436,15 @@ def start_game(start_level):
     # Points text
     draw_text(screen, bg, points_text, "right", 0)
     draw_text(screen, bg, points_num_text, "right", 1)
+    # Next text
+    draw_text(screen, bg, next_text, "right", 4)
+
     # Lines text
     draw_text(screen, bg, lines_text, "left", 0)
     draw_text(screen, bg, points_num_text, "left", 1)
     # Level text
-    draw_text(screen, bg, level_text, "left", 3)
-    draw_text(screen, bg, level_num_text, "left", 4)
+    draw_text(screen, bg, level_text, "left", 4)
+    draw_text(screen, bg, level_num_text, "left", 5)
 
     pygame.display.flip()
 
