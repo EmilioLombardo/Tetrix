@@ -425,11 +425,9 @@ def start_game(start_level):
                         text_render,
                         text_pos)
 
-        pygame.display.update(dirty_rect)
-        # return dirty_rect
+        return dirty_rect
 
-    def update_display():
-        dirty_rects = []
+    def update_display(dirty_rects):
 
         dirty_rects += tetrimino.draw(screen)
         dirty_rects += next_piece.draw(screen)
@@ -457,6 +455,7 @@ def start_game(start_level):
 
     # --- Game loop --- #
 
+    dirty_rects = []
     paused = False
     in_game = True
     while in_game:
@@ -590,7 +589,8 @@ def start_game(start_level):
             points += 1
             # Update points text
             points_num_text = number_font.render(str(points), True, c.WHITE)
-            draw_text(screen, bg, points_num_text, "right", 1)
+            dirty_rects.append(
+                    draw_text(screen, bg, points_num_text, "right", 1))
 
 
         # --- Drawing stuff and updating screen --- #
@@ -604,13 +604,14 @@ def start_game(start_level):
             for spr in tetrimino:
                 spr.image.fill(spr.colour)
 
-        update_display()
+        update_display(dirty_rects)
+        dirty_rects = []
 
         # After tetrimino has locked and flashed
         if tetrimino.lock_timer <= -4:
             # If the tetrimino locks above the playing field; Game over :o
             if max(tetrimino.minos[:,1]) < 0:
-                update_display()
+                update_display(dirty_rects)
                 for _ in range(30): clock.tick(FPS)
                 in_game = False
                 menu(start_level)
@@ -641,17 +642,17 @@ def start_game(start_level):
                 w = 2
                 step = c.field_width / 42
                 while x >= c.field_pos[0]:
-                    dirty_rects = []
+                    animation_dirty_rects = []
 
                     for row_n in rows_to_clear:
                         y = c.field_pos[1] + row_n * c.cell_size
                         rectangle = pygame.Rect(x, y, w, c.cell_size)
-                        dirty_rects.append(
+                        animation_dirty_rects.append(
                                 pygame.draw.rect(screen,
                                         c.BLUE_GRAY,
                                         rectangle))
 
-                    pygame.display.update(dirty_rects)
+                    pygame.display.update(animation_dirty_rects)
 
                     w += 2 * step
                     x -= step
@@ -696,16 +697,19 @@ def start_game(start_level):
 
                     level_num_text = number_font.render(
                             str(level), True, c.WHITE)
-                    draw_text(screen, bg, level_num_text, "left", 5)
+                    dirty_rects.append(
+                            draw_text(screen, bg, level_num_text, "left", 5))
 
                 # Update points and lines text
                 points_num_text = number_font.render(
                         str(points), True, c.WHITE)
-                draw_text(screen, bg, points_num_text, "right", 1)
+                dirty_rects.append(
+                        draw_text(screen, bg, points_num_text, "right", 1))
 
                 lines_num_text = number_font.render(
                         str(lines), True, c.WHITE)
-                draw_text(screen, bg, lines_num_text, "left", 1)
+                dirty_rects.append(
+                        draw_text(screen, bg, lines_num_text, "left", 1))
 
 
             # --- Spawn new tetrimino and next piece --- #
@@ -719,7 +723,7 @@ def start_game(start_level):
 
             # If the new piece spawns overlapping any dead minos; Game over :o
             if tetrimino.colliding(dead_group):
-                update_display()
+                update_display(dirty_rects)
                 for _ in range(30): clock.tick(FPS)
                 in_game = False
                 menu(start_level)
