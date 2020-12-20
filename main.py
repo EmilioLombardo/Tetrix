@@ -689,7 +689,7 @@ def start_game(start_level):
 
                     level_num_text = number_font.render(
                             str(level), True, c.WHITE)
-                    draw_text(screen, bg, level_num_text, "left", 4)
+                    draw_text(screen, bg, level_num_text, "left", 5)
 
                 # Update points and lines text
                 points_num_text = number_font.render(
