@@ -651,6 +651,7 @@ def start_game(start_level):
                 w = 2
                 step = c.field_width / 42
                 while x >= c.field_pos[0]:
+                    pygame.event.pump()
                     animation_dirty_rects = []
 
                     for row_n in rows_to_clear:
