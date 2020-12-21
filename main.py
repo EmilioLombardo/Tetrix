@@ -236,18 +236,22 @@ screen = pygame.display.set_mode((c.width, c.height), flags)
 pygame.display.set_caption("Tetrix")
 
 # --- Make background --- #
-def draw_field_border(surface, colour):
-    x0 = c.field_pos[0] - 1
+def draw_field_border(surface, colour, w=1):
+    dirty_rects = []
+
+    x0 = c.field_pos[0] - w
     y0 = c.field_pos[1]
     x1 = c.field_pos[0] + c.field_width
     y1 = c.field_pos[1] + c.field_height
 
-    pygame.draw.line(surface, colour,
-                     (x0, y0), (x0, y1))
-    pygame.draw.line(surface, colour,
-                     (x0, y1), (x1, y1))
-    pygame.draw.line(surface, colour,
-                     (x1, y0), (x1, y1))
+    dirty_rects.append(
+            pygame.draw.line(surface, colour, (x0, y0), (x0, y1), w))
+    dirty_rects.append(
+            pygame.draw.line(surface, colour, (x0, y1), (x1, y1), w))
+    dirty_rects.append(
+            pygame.draw.line(surface, colour, (x1, y0), (x1, y1), w))
+
+    return dirty_rects
 
 bg = pygame.Surface(screen.get_size())
 bg = bg.convert()
