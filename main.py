@@ -330,6 +330,7 @@ def menu(selected_lvl):
                         icn_top_left[1] < mouse_pos[1] < icn_bottom_right[1]):
 
                         # If mouse is on an icon, make that icon selected
+                        if selected_lvl != int(icn.num): c.shift_sound.play(maxtime=60)    
                         selected_lvl = int(icn.num)
 
             if (event.type == pygame.KEYDOWN and
@@ -349,15 +350,19 @@ def menu(selected_lvl):
             # --- Level selection control --- #
 
             if event.key in c.RIGHT_KEYS:
+                c.shift_sound.play(maxtime=60)
                 selected_lvl = (selected_lvl + 1) % lvl_range
 
             if event.key in c.LEFT_KEYS:
+                c.shift_sound.play(maxtime=60)
                 selected_lvl = (selected_lvl - 1) % lvl_range
 
             if event.key in c.UP_KEYS:
+                c.shift_sound.play(maxtime=60)
                 selected_lvl = (selected_lvl - lvl_grid_cols) % lvl_range
 
             if event.key in c.DOWN_KEYS:
+                c.shift_sound.play(maxtime=60)
                 selected_lvl = (selected_lvl + lvl_grid_cols) % lvl_range
 
         level_icons[selected_lvl].selected = True
