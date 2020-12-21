@@ -76,7 +76,15 @@ text_position = {
                                field_pos[1] + margin + row * space)
         }
 
-# ------ Point rewards for line clears ------ #
+# ------ Level progression and scoring ------ #
+
+# Falling speeds for different levels
+frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
+                 9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
+                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                 1]
+
+max_level = 30
 
 clear_points = [0, 40, 100, 300, 1200]
     # 1 line: 40 points, 2 lines: 300 points etc.
@@ -99,14 +107,6 @@ tetriminos = (
 
 DAS = 8 # Delayed Auto-Shift (frames)
 ARR = 3 # Auto Repeat Rate (in frames/cell)
-
-# Falling speeds for different levels
-frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
-                 9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
-                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                 1]
-
-max_level = 30
 
 # --- SRS offset data --- #
 
