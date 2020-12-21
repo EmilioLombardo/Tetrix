@@ -186,12 +186,12 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
         self.update_sprites()
 
-    def fall(self, dead_minos):
+    def fall(self, dead_minos, level):
 
         if not self.landed(dead_minos):
             self.minos[:,1] += 1
             self.centre_pos[1] += 1
-            self.lock_timer = 32
+            self.lock_timer = c.lock_delay[level]
             self.update_sprites()
 
     def colliding(self, dead_minos):
@@ -611,11 +611,11 @@ def start_game(start_level):
 
         elif not soft_drop and frame_counter % c.frames_per_cell[level] == 0:
             tetrimino.clear(screen, bg)
-            tetrimino.fall(dead_group)
+            tetrimino.fall(dead_group, level)
 
         elif soft_drop and frame_counter % soft_drop_fpc == 0:
             tetrimino.clear(screen, bg)
-            tetrimino.fall(dead_group)
+            tetrimino.fall(dead_group, level)
 
             # Pushdown points
             points += 1

@@ -1,5 +1,5 @@
 import pygame
-from numpy import array
+from numpy import array, linspace
 
 pygame.init()
 display_info = pygame.display.Info()
@@ -85,6 +85,9 @@ frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
                  1]
 
 max_level = 30
+
+# List of lock delays for different levels
+lock_delay = [int(t) for t in linspace(31, 15, 31)]
 
 clear_points = [0, 40, 100, 300, 1200]
     # 1 line: 40 points, 2 lines: 300 points etc.
