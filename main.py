@@ -277,8 +277,10 @@ def randomiser(prev):
 # ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
 
-    title_text = title_font.render("TETRIX", True, c.WHITE)
     pygame.key.set_repeat(300, 100)
+    pygame.mouse.set_visible(True)
+
+    title_text = title_font.render("TETRIX", True, c.WHITE)
 
     level_icons = []
     lvl_range = 20 # One can choose to start on levels 0-19
@@ -500,6 +502,11 @@ def start_game(start_level):
             if (event.type == pygame.KEYDOWN and
                 event.key == pygame.K_ESCAPE):
                 in_game = False
+
+            if event.type == pygame.KEYDOWN:
+                pygame.mouse.set_visible(False)
+            elif event.type == pygame.MOUSEMOTION:
+                pygame.mouse.set_visible(True)
 
             # Pausing
             if (event.type == pygame.KEYDOWN and
