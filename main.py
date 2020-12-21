@@ -641,7 +641,6 @@ def start_game(start_level):
             dirty_rects.append(
                     draw_text(screen, bg, points_num_text, "right", 1))
 
-
         # --- Drawing stuff and updating screen --- #
 
         # Make tetrimino flash when it locks
@@ -696,7 +695,8 @@ def start_game(start_level):
                 x = c.field_pos[0] + c.field_width // 2 - 1
                 w = 2
                 step = c.field_width / 42
-                while x >= c.field_pos[0]:
+                i = 0
+                while x >= c.field_pos[0]: # Animation loop
                     pygame.event.pump()
                     animation_dirty_rects = []
 
@@ -708,12 +708,29 @@ def start_game(start_level):
                                         c.BLUE_GREY,
                                         rectangle))
 
+                    # Make field border flash if you get a tetris
+                    if len(rows_to_clear) != 4:
+                        pass
+
+                    elif i % 14 == 0:
+                        animation_dirty_rects += draw_field_border(
+                                screen, c.CYAN, w=2)
+
+                    elif i % 14 == 7:
+                        animation_dirty_rects += draw_field_border(
+                                screen, c.BLUE_GREY, w=2)
+                        draw_field_border(screen, c.GREY)
+
                     pygame.display.update(animation_dirty_rects)
 
                     w += 2 * step
                     x -= step
+                    i += 1
 
                     clock.tick(FPS)
+
+                dirty_rects += draw_field_border(screen, c.BLUE_GREY, w=2)
+                draw_field_border(screen, c.GREY)
 
                 # Erase all dead minos from the screen before moving any
                 dead_group.clear(screen, bg)
