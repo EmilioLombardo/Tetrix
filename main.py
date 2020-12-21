@@ -514,7 +514,10 @@ def start_game(start_level):
                     pygame.display.update(
                             pygame.draw.rect(
                                     screen, c.BLUE_GRAY, c.field_rect))
-                    continue
+
+            if paused:
+                pygame.event.clear()
+                continue
 
             # --- Register DOWN release for soft drop control --- #
             if (event.type == pygame.KEYUP and
