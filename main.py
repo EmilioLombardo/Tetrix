@@ -308,13 +308,35 @@ def menu(selected_lvl):
         for icn in level_icons:
             icn.selected = False
 
+        mouse_buttons = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
         keys = pygame.key.get_pressed()
         events = pygame.event.get()
+
         for event in events:
             # Allow user to exit the screen
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type in [pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN]:
+                for icn in level_icons:
+                    icn_top_left = icn.rect[:2]
+                    icn_bottom_right = (icn.rect[0] + icn.w,
+                                        icn.rect[1] + icn.w)
+
+                    if (icn_top_left[0] < mouse_pos[0] < icn_bottom_right[0]
+                        and
+                        icn_top_left[1] < mouse_pos[1] < icn_bottom_right[1]):
+
+                        # If mouse is on an icon, make that icon selected
+                        selected_lvl = int(icn.num)
+
+            if (event.type == pygame.KEYDOWN and
+                event.key in c.CONFIRM_KEYS) or (
+                mouse_buttons[0]):
+                # Start game on selected level
+                on_menu_screen = False
 
             if event.type != pygame.KEYDOWN:
                 continue
@@ -338,12 +360,13 @@ def menu(selected_lvl):
             if event.key in c.DOWN_KEYS:
                 selected_lvl = (selected_lvl + lvl_grid_cols) % lvl_range
 
-            if event.key in c.CONFIRM_KEYS:
-                on_menu_screen = False
-                c.level_up_sound.play()
-                start_game(selected_lvl)
-
         level_icons[selected_lvl].selected = True
+
+        if not on_menu_screen:
+            update_display()
+            c.level_up_sound.play()
+            for _ in range(10): clock.tick(FPS) # Tiny delay
+            start_game(selected_lvl)
 
         clock.tick(FPS)
 
