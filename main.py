@@ -339,6 +339,7 @@ def menu(selected_lvl):
                 mouse_buttons[0]):
                 # Start game on selected level
                 on_menu_screen = False
+                c.rot_sound.play(maxtime=100)
 
             if event.type != pygame.KEYDOWN:
                 continue
@@ -370,8 +371,8 @@ def menu(selected_lvl):
 
         if not on_menu_screen:
             update_display()
+            for _ in range(10): clock.tick(FPS) # Small delay
             c.level_up_sound.play()
-            for _ in range(10): clock.tick(FPS) # Tiny delay
             start_game(selected_lvl)
 
         clock.tick(FPS)
