@@ -587,6 +587,7 @@ def start_game(start_level):
 
         if dir_held and tetrimino.lock_timer > 0:
             DAS_counter += 1
+            spawn_freeze_timer = 0
             if DAS_counter == c.DAS:
                 prev_pos = tetrimino.centre_pos.copy()
                 tetrimino.clear(screen, bg)
