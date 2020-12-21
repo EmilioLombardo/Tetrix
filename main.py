@@ -330,7 +330,8 @@ def menu(selected_lvl):
                         icn_top_left[1] < mouse_pos[1] < icn_bottom_right[1]):
 
                         # If mouse is on an icon, make that icon selected
-                        if selected_lvl != int(icn.num): c.shift_sound.play(maxtime=60)    
+                        if selected_lvl != int(icn.num):
+                            c.shift_sound.play(maxtime=60)
                         selected_lvl = int(icn.num)
 
             if (event.type == pygame.KEYDOWN and
@@ -729,7 +730,7 @@ def start_game(start_level):
                 lines += len(rows_to_clear)
                 points += c.clear_points[len(rows_to_clear)] * (level + 1)
                 if lines // 10 > level:
-                    level += 1
+                    level += 1 if level < c.max_level else 0
                     c.level_up_sound.play()
                     if c.frames_per_cell[level] <= 3:
                         soft_drop_fpc = 1

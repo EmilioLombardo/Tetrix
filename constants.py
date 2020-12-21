@@ -106,6 +106,8 @@ frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
                  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                  1]
 
+max_level = 30
+
 # --- SRS offset data --- #
 
 offsets_TJZSL = array((
