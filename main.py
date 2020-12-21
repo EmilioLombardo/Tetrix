@@ -30,10 +30,10 @@ class NumIcon(pygame.sprite.Sprite):
         if self.selected:
             self.image.fill(c.WHITE)
             self.text = self.level_font.render(
-                    self.num, True, c.BLUE_GRAY)
+                    self.num, True, c.BLUE_GREY)
             self.image.blit(self.text, self.text_rect)
         else:
-            self.image.fill(c.BLUE_GRAY)
+            self.image.fill(c.BLUE_GREY)
             self.text = self.level_font.render(
                     self.num, True, c.WHITE)
             self.image.blit(self.text, self.text_rect)
@@ -251,7 +251,7 @@ def draw_field_border(surface, colour):
 
 bg = pygame.Surface(screen.get_size())
 bg = bg.convert()
-bg.fill(c.BLUE_GRAY)
+bg.fill(c.BLUE_GREY)
 draw_field_border(bg, c.GREY)
 
 # --- Global timing stuff --- #
@@ -439,6 +439,7 @@ def start_game(start_level):
         return complete_rows
 
     def draw_text(dest_surf, bg_surf, text_render, side, row):
+
         text_pos = c.text_position[side](row)
 
         w = c.left_txt_offset
@@ -520,7 +521,7 @@ def start_game(start_level):
                     # Draw over the entire field with bg colour
                     pygame.display.update(
                             pygame.draw.rect(
-                                    screen, c.BLUE_GRAY, c.field_rect))
+                                    screen, c.BLUE_GREY, c.field_rect))
 
             if paused:
                 pygame.event.clear()
@@ -700,7 +701,7 @@ def start_game(start_level):
                         rectangle = pygame.Rect(x, y, w, c.cell_size)
                         animation_dirty_rects.append(
                                 pygame.draw.rect(screen,
-                                        c.BLUE_GRAY,
+                                        c.BLUE_GREY,
                                         rectangle))
 
                     pygame.display.update(animation_dirty_rects)

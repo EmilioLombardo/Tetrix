@@ -58,7 +58,7 @@ ORANGE = (240, 150, 10)
 CYAN = (0, 200, 230)
 WHITE = (255, 255, 255)
 GREY = (130, 130, 130)
-BLUE_GRAY = (17, 28, 36)
+BLUE_GREY = (17, 28, 36)
 
 # What colours to use for the various tetriminos. Index represents piece type
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
