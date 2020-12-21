@@ -70,7 +70,7 @@ space = 40
 left_txt_offset = 130 + margin
 
 text_position = {
-        "left" : lambda row: (field_pos[0] - left_txt_offset,
+        "left" : lambda row: (field_pos[0] - left_txt_offset - 1,
                               field_pos[1] + margin + row * space),
 
         "right" : lambda row: (field_pos[0] + field_width + margin,
