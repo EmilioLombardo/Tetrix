@@ -722,11 +722,11 @@ def start_game(start_level):
                     if len(rows_to_clear) != 4:
                         pass
 
-                    elif i % 14 == 0:
+                    elif i % 4 == 0:
                         animation_dirty_rects += draw_field_border(
                                 screen, c.CYAN, w=2)
 
-                    elif i % 14 == 7:
+                    elif i % 4 == 2:
                         animation_dirty_rects += draw_field_border(
                                 screen, c.BLUE_GREY, w=2)
                         draw_field_border(screen, c.GREY)
