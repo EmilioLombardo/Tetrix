@@ -547,6 +547,7 @@ def start_game(start_level):
                 soft_drop = False
 
             if paused:
+                # Don't check for shifting and rotating inputs while paused
                 pygame.event.clear()
                 continue
 
