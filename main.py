@@ -411,14 +411,14 @@ def start_game(start_level):
     lines = 0
     points = 0
 
+    soft_drop = False # If True, piece falls and locks faster than normal
+
     if c.frames_per_cell[level] > 3:
         soft_drop_fpc = 2 # Soft drop falling speed in frames per cell
     else:
         soft_drop_fpc = 1
 
-    soft_drop = False # If True, piece falls and locks faster than normal
-
-    # --- Text initialisation and drawing --- #
+    # --- Text initialisation --- #
 
     points_text = info_font.render("POINTS", True, c.WHITE)
     lines_text = info_font.render("LINES", True, c.WHITE)
