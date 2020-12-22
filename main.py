@@ -455,7 +455,7 @@ def start_game(start_level):
 
     def draw_text(dest_surf, bg_surf, text_render, side, row):
 
-        text_pos = c.text_position[side](row)
+        text_pos = c.text_position(side, row, text_render.get_width())
 
         w = c.left_txt_offset
         h = text_render.get_height()
