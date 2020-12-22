@@ -478,16 +478,18 @@ def start_game(start_level):
 
     # --- Text initialisation --- #
 
-    points_text = info_font.render("POINTS", True, c.WHITE)
-    lines_text = info_font.render("LINES", True, c.WHITE)
-    level_text = info_font.render("LEVEL", True, c.WHITE)
-    next_text = info_font.render("NEXT", True, c.WHITE)
+    lines_text = Text("LINES", info_font, c.WHITE, "left", 0)
+    lines_num_text = Text(str(lines), number_font, c.WHITE, "left", 1)
 
-    paused_text = info_font.render("PAUSED", True, c.WHITE)
+    level_text = Text("LEVEL", info_font, c.WHITE, "left", 4)
+    level_num_text = Text(str(level), number_font, c.WHITE, "left", 5)
 
-    points_num_text = number_font.render(str(points), True, c.WHITE)
-    lines_num_text = number_font.render(str(lines), True, c.WHITE)
-    level_num_text = number_font.render(str(level), True, c.WHITE)
+    paused_text = Text("PAUSED", info_font, c.WHITE, "centre", 4)
+
+    points_text = Text("POINTS", info_font, c.WHITE, "right", 0)
+    points_num_text = Text(str(points), number_font, c.WHITE, "right", 1)
+
+    next_text = Text("NEXT", info_font, c.WHITE, "right", 4)
 
     # --- Tetrimino, next piece and dead mino sprite group --- #
 
@@ -513,25 +515,6 @@ def start_game(start_level):
 
         return complete_rows
 
-    def draw_text(dest_surf, bg_surf, text_render, side, row):
-
-        text_pos = c.text_position(side, row, text_render.get_width())
-
-        w = c.left_txt_offset
-        h = text_render.get_height()
-
-        text_rect = (*text_pos, w, h)
-
-        # Draw bg over text
-        dest_surf.set_clip(text_rect)
-        dest_surf.blit(bg_surf, (0, 0))
-        dest_surf.set_clip()
-
-        # Draw text
-        dirty_rect = screen.blit(text_render, text_pos)
-
-        return dirty_rect
-
     def update_display(dirty_rects):
 
         dirty_rects += tetrimino.draw(screen)
@@ -543,18 +526,13 @@ def start_game(start_level):
 
     screen.blit(bg, (0, 0))
 
-    # Points text
-    draw_text(screen, bg, points_text, "right", 0)
-    draw_text(screen, bg, points_num_text, "right", 1)
-    # Next text
-    draw_text(screen, bg, next_text, "right", 4)
-
-    # Lines text
-    draw_text(screen, bg, lines_text, "left", 0)
-    draw_text(screen, bg, points_num_text, "left", 1)
-    # Level text
-    draw_text(screen, bg, level_text, "left", 4)
-    draw_text(screen, bg, level_num_text, "left", 5)
+    lines_text.display(screen, bg)
+    lines_num_text.display(screen, bg)
+    level_text.display(screen, bg)
+    level_num_text.display(screen, bg)
+    points_text.display(screen, bg)
+    points_num_text.display(screen, bg)
+    next_text.display(screen, bg)
 
     pygame.display.flip()
 
@@ -596,7 +574,7 @@ def start_game(start_level):
                     next_piece.clear(screen, bg)
                     # Draw over the entire field with bg colour
                     pygame.draw.rect(screen, c.BLUE_GREY, c.field_rect)
-                    draw_text(screen, bg, paused_text, "centre", 4)
+                    paused_text.display(screen, bg)
                     pygame.display.update(c.field_rect)
 
             # --- Register DOWN release for soft drop control --- #
@@ -710,9 +688,8 @@ def start_game(start_level):
             # Pushdown points
             points += 1
             # Update points text
-            points_num_text = number_font.render(str(points), True, c.WHITE)
             dirty_rects.append(
-                    draw_text(screen, bg, points_num_text, "right", 1))
+                    points_num_text.display(screen, bg, new_text=str(points)))
 
         # --- Drawing stuff and updating screen --- #
 
@@ -842,21 +819,15 @@ def start_game(start_level):
                     if c.frames_per_cell[level] <= 3:
                         soft_drop_fpc = 1
 
-                    level_num_text = number_font.render(
-                            str(level), True, c.WHITE)
                     dirty_rects.append(
-                            draw_text(screen, bg, level_num_text, "left", 5))
+                            level_num_text.display(screen, bg, new_text=str(level)))
 
                 # Update points and lines text
-                points_num_text = number_font.render(
-                        str(points), True, c.WHITE)
                 dirty_rects.append(
-                        draw_text(screen, bg, points_num_text, "right", 1))
+                        points_num_text.display(screen, bg, new_text=str(points)))
 
-                lines_num_text = number_font.render(
-                        str(lines), True, c.WHITE)
                 dirty_rects.append(
-                        draw_text(screen, bg, lines_num_text, "left", 1))
+                        lines_num_text.display(screen, bg, new_text=str(lines)))
 
             # --- Spawn new tetrimino and next piece --- #
 
