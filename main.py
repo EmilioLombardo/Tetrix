@@ -321,7 +321,6 @@ def menu(selected_lvl):
 
     on_menu_screen = True
     while on_menu_screen:
-        update_display()
 
         for icn in level_icons:
             icn.selected = False
@@ -386,8 +385,9 @@ def menu(selected_lvl):
 
         level_icons[selected_lvl].selected = True
 
+        update_display()
+
         if not on_menu_screen:
-            update_display()
             for _ in range(10): clock.tick(FPS) # Small delay
             c.level_up_sound.play()
             start_game(selected_lvl)
