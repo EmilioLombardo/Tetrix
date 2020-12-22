@@ -274,6 +274,7 @@ def randomiser(prev):
     roll = random.randint(0, len(c.tetriminos)) # 0-7
 
     if roll == len(c.tetriminos) or roll == prev:
+        # If roll is 7 or same as previous
         roll = random.randint(0, len(c.tetriminos) - 1) # 0-6
 
     return roll # A value 0-6
@@ -467,9 +468,7 @@ def start_game(start_level):
         dest_surf.set_clip()
 
         # Draw text
-        dirty_rect = screen.blit(
-                        text_render,
-                        text_pos)
+        dirty_rect = screen.blit(text_render, text_pos)
 
         return dirty_rect
 
@@ -802,7 +801,6 @@ def start_game(start_level):
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
             next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
 
-            soft_drop_started = False
             spawn_freeze_timer = max_spawn_freeze
 
             # If the new piece spawns overlapping any dead minos; Game over :o
