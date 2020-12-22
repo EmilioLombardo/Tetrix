@@ -289,16 +289,27 @@ def menu(selected_lvl):
     level_icons = []
     lvl_range = 20 # One can choose to start on levels 0-19
     lvl_grid_cols = 10
-    for i in range(lvl_range):
-        num = i
+
+    for num in range(lvl_range):
         x = (c.width - NumIcon.w * lvl_grid_cols) // 2
-        x += (i % lvl_grid_cols) * NumIcon.w
-        y = 300 + NumIcon.w * (i // lvl_grid_cols)
+        x += (num % lvl_grid_cols) * NumIcon.w
+        y = 300 + NumIcon.w * (num // lvl_grid_cols)
         selected = True if num == selected_lvl else False
+
         level_icons.append(NumIcon(num, x, y, selected))
 
     lvl_select_group = pygame.sprite.Group()
     lvl_select_group.add(*level_icons)
+
+    def point_in_rect(point, rect):
+        x, y = point
+        x1, y1, w, h = rect
+        x2, y2 = x1 + w, y1 + h
+
+        if (x1 < x < x2) and (y1 < y < y2):
+            return True
+
+        return False
 
     def update_display():
         screen.blit(bg, (0, 0))
@@ -327,28 +338,27 @@ def menu(selected_lvl):
 
             if event.type in [pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN]:
                 for icn in level_icons:
-                    icn_top_left = icn.rect[:2]
-                    icn_bottom_right = (icn.rect[0] + icn.w,
-                                        icn.rect[1] + icn.w)
-
-                    if (icn_top_left[0] < mouse_pos[0] < icn_bottom_right[0]
-                        and
-                        icn_top_left[1] < mouse_pos[1] < icn_bottom_right[1]):
-
-                        # If mouse is on an icon, make that icon selected
-                        if selected_lvl != int(icn.num):
-                            c.shift_sound.play(maxtime=60)
+                    if not point_in_rect(mouse_pos, icn.rect):
+                        continue
+                    # If mouse is on an icon, make that icon selected
+                    if selected_lvl != int(icn.num):
+                        c.shift_sound.play(maxtime=60)
                         selected_lvl = int(icn.num)
 
-            if (event.type == pygame.KEYDOWN and
-                event.key in c.CONFIRM_KEYS) or (
-                mouse_buttons[0]):
-                # Start game on selected level
+            # If mouse button 1 is pressed on an icon
+            if (event.type == pygame.MOUSEBUTTONUP and mouse_buttons[0] and
+                point_in_rect(mouse_pos, level_icons[selected_lvl].rect)):
+                # Start game
                 on_menu_screen = False
                 c.rot_sound.play(maxtime=100)
 
             if event.type != pygame.KEYDOWN:
                 continue
+
+            if event.key in c.CONFIRM_KEYS:
+                # Start game
+                on_menu_screen = False
+                c.rot_sound.play(maxtime=100)
 
             # Allow user to exit the screen
             if event.key == pygame.K_ESCAPE:
