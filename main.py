@@ -313,11 +313,13 @@ def menu(selected_lvl):
         return False
 
     def update_display():
-        screen.blit(bg, (0, 0))
-        screen.blit(title_text, ((c.width - title_text.get_width())//2, 100))
         lvl_select_group.update()
         lvl_select_group.draw(screen)
         pygame.display.flip()
+
+    screen.blit(bg, (0, 0))
+    screen.blit(title_text, ((c.width - title_text.get_width())//2, 100))
+    pygame.display.flip()
 
     on_menu_screen = True
     while on_menu_screen:
