@@ -425,6 +425,8 @@ def start_game(start_level):
     level_text = info_font.render("LEVEL", True, c.WHITE)
     next_text = info_font.render("NEXT", True, c.WHITE)
 
+    paused_text = info_font.render("PAUSED", True, c.WHITE)
+
     points_num_text = number_font.render(str(points), True, c.WHITE)
     lines_num_text = number_font.render(str(lines), True, c.WHITE)
     level_num_text = number_font.render(str(level), True, c.WHITE)
@@ -527,23 +529,26 @@ def start_game(start_level):
                 event.key in c.PAUSE_KEYS):
                 paused = (False == paused) # Toggle True/False
                 if not paused:
+                    # Erase PAUSED text and redraw dead minos
+                    pygame.draw.rect(screen, c.BLUE_GREY, c.field_rect)
                     dead_group.repaint_rect(screen.get_rect())
-                    pygame.display.update(dead_group.draw(screen))
+                    dead_group.draw(screen)
+                    pygame.display.update(c.field_rect)
                 else:
                     next_piece.clear(screen, bg)
                     # Draw over the entire field with bg colour
-                    pygame.display.update(
-                            pygame.draw.rect(
-                                    screen, c.BLUE_GREY, c.field_rect))
-
-            if paused:
-                pygame.event.clear()
-                continue
+                    pygame.draw.rect(screen, c.BLUE_GREY, c.field_rect)
+                    draw_text(screen, bg, paused_text, "centre", 4)
+                    pygame.display.update(c.field_rect)
 
             # --- Register DOWN release for soft drop control --- #
             if (event.type == pygame.KEYUP and
                 event.key in c.DOWN_KEYS):
                 soft_drop = False
+
+            if paused:
+                pygame.event.clear()
+                continue
 
             if not (event.type == pygame.KEYDOWN and
                     tetrimino.lock_timer > 0):
