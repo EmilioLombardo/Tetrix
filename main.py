@@ -568,7 +568,7 @@ def start_game(start_level):
                 DAS_counter = 0
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
-                                           spawn_freeze_timer)
+                                         spawn_freeze_timer)
 
             if event.key in c.RIGHT_KEYS:
                 c.shift_sound.play(maxtime=60)
@@ -577,7 +577,7 @@ def start_game(start_level):
                 DAS_counter = 0
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
-                                           spawn_freeze_timer)
+                                         spawn_freeze_timer)
 
             # --- Rotation on keypress --- #
             if event.key in c.CW_KEYS:
@@ -688,8 +688,7 @@ def start_game(start_level):
 
             rows_to_clear = complete_rows(dead_group)
 
-            if len(rows_to_clear) != 0:
-                # If there are any rows to clear
+            if len(rows_to_clear) != 0: # If there are any rows to clear
                 if len(rows_to_clear) == 4:
                     c.tetris_sound.play()
                 else:
@@ -719,7 +718,8 @@ def start_game(start_level):
                         y = c.field_pos[1] + row_n * c.cell_size
                         rectangle = pygame.Rect(x, y, w, c.cell_size)
                         animation_dirty_rects.append(
-                                pygame.draw.rect(screen,
+                                pygame.draw.rect(
+                                        screen,
                                         c.BLUE_GREY,
                                         rectangle))
 
@@ -799,7 +799,6 @@ def start_game(start_level):
                         str(lines), True, c.WHITE)
                 dirty_rects.append(
                         draw_text(screen, bg, lines_num_text, "left", 1))
-
 
             # --- Spawn new tetrimino and next piece --- #
 
