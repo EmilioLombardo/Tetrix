@@ -38,6 +38,62 @@ class NumIcon(pygame.sprite.Sprite):
                     self.num, True, c.WHITE)
             self.image.blit(self.text, self.text_rect)
 
+# ------ Class for displaying text ------ #
+class Text:
+
+    def position(cls, column, row, w):
+        margin = 40
+        left_column_offset = 180
+
+        return {
+            "left" : (c.field_pos[0] - left_column_offset - 1,
+                      c.field_pos[1] + margin + row * margin),
+
+            "right" : (c.field_pos[0] + c.field_width + margin,
+                       c.field_pos[1] + margin + row * margin),
+
+            "centre" : (c.field_pos[0] + (c.field_width - w)/2,
+                        c.field_pos[1] + margin + row * margin)
+
+        }[column]
+
+    def __init__(self, text, font, colour, column, row):
+
+        self.text = text
+        self.font = font
+        self.colour = colour
+
+        self.column = column
+        self.row = row
+
+        self.render = self.font.render(self.text, True, self.colour)
+
+    def display(self, dest_surf, bg_surf, new_text=None):
+        w = self.render.get_width()
+
+        if new_text is not None:
+            new_render = self.font.render(new_text, True, self.colour)
+            w = max(w, new_render.get_width())
+
+            self.render = new_render
+            self.text = new_text
+
+        pos = self.position(self.column, self.row, w)
+
+        h = self.render.get_height()
+
+        text_rect = (*pos, w, h)
+
+        # Draw bg over text
+        dest_surf.set_clip(text_rect)
+        dest_surf.blit(bg_surf, (0, 0))
+        dest_surf.set_clip()
+
+        # Draw text
+        dirty_rect = dest_surf.blit(self.render, pos)
+
+        return dirty_rect
+
 # ------ Class for individual minos (blocks) ------ #
 class Mino(pygame.sprite.DirtySprite):
     w = c.cell_size

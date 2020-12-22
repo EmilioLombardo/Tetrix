@@ -64,22 +64,6 @@ BLUE_GREY = (17, 28, 36)
 # What colours to use for the various tetriminos. Index represents piece type
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
-# ------ Text stuff ------ #
-margin = 40
-space = 40
-left_txt_offset = 130 + margin
-
-text_position = lambda side, row, w: {
-        "left" : (field_pos[0] - left_txt_offset - 1,
-                field_pos[1] + margin + row * space),
-
-        "right" : (field_pos[0] + field_width + margin,
-                field_pos[1] + margin + row * space),
-
-        "centre" : (field_pos[0] + (field_width - w)/2,
-                field_pos[1] + margin + row * space)
-        }[side]
-
 # ------ Level progression and scoring ------ #
 
 # Falling speeds for different levels
