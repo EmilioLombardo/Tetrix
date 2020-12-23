@@ -820,20 +820,24 @@ def start_game(start_level):
                         soft_drop_fpc = 1
 
                     dirty_rects.append(
-                            level_num_text.display(screen, bg, new_text=str(level)))
+                            level_num_text.display(
+                                    screen, bg, new_text=str(level)))
 
                 # Update points and lines text
                 dirty_rects.append(
-                        points_num_text.display(screen, bg, new_text=str(points)))
+                        points_num_text.display(
+                                screen, bg, new_text=str(points)))
 
                 dirty_rects.append(
-                        lines_num_text.display(screen, bg, new_text=str(lines)))
+                        lines_num_text.display(
+                                screen, bg, new_text=str(lines)))
 
             # --- Spawn new tetrimino and next piece --- #
 
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
-            next_piece = Tetrimino(randomiser(tetrimino.type_ID), array((12.5, 10)))
+            next_piece = Tetrimino(randomiser(tetrimino.type_ID),
+                                   array((12.5, 10)))
 
             spawn_freeze_timer = max_spawn_freeze
 
