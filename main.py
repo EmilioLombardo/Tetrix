@@ -680,9 +680,9 @@ def start_game(start_level):
             for _ in range(30): clock.tick(FPS)
 
             # Animation (screen wipe, reveal GAME OVER text)
-            step = c.field_rect.height / 360
-            y = c.field_rect[1] + c.field_rect.height - 1
+            step = c.field_rect.height / 75
             h = int(step)
+            y = c.field_rect[1] + c.field_rect.height - h
             while y > c.field_rect[1]:
                 pygame.event.pump()
                 animation_dirty_rects = []
@@ -697,6 +697,7 @@ def start_game(start_level):
                 pygame.display.update(animation_dirty_rects)
                 y -= step
                 h += step
+                clock.tick(FPS)
 
             for _ in range(30): clock.tick(FPS)
             pygame.event.clear()
