@@ -22,9 +22,9 @@ field_pos = ( # (x, y) for top-left corner of playing field
     )
 cell_size = field_width // COLS
 field_rect = pygame.Rect(field_pos[0],
-                         field_pos[1] - 2 * cell_size,
+                         field_pos[1] - 3 * cell_size,
                          field_width,
-                         field_height + 2 * cell_size)
+                         field_height + 3 * cell_size)
 
 # ------ Controls ------ #
 
