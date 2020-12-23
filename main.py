@@ -813,8 +813,8 @@ def start_game(start_level):
                 # Update points, lines and level variables
                 lines += len(rows_to_clear)
                 points += c.clear_points[len(rows_to_clear)] * (level + 1)
-                if lines // 10 > level:
-                    level += 1 if level < c.max_level else 0
+                if lines // 10 > level < c.max_level:
+                    level += 1
                     c.level_up_sound.play()
                     if c.frames_per_cell[level] <= 3:
                         soft_drop_fpc = 1
