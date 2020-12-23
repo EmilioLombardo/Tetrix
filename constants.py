@@ -47,6 +47,7 @@ lock_sound = pygame.mixer.Sound("sounds/lock_sound.wav")
 clear_sound = pygame.mixer.Sound("sounds/clear_sound.wav")
 tetris_sound = pygame.mixer.Sound("sounds/tetris_sound.wav")
 level_up_sound = pygame.mixer.Sound("sounds/level_up_sound.wav")
+game_over_sound = pygame.mixer.Sound("sounds/game_over_sound.wav")
 
 # ------ Colours ------ #
 

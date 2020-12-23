@@ -674,8 +674,7 @@ def start_game(start_level):
             pygame.mouse.set_visible(True)
             pygame.event.clear()
 
-            # TODO: Add game over sound
-            ### c.game_over_sound.play()
+            c.game_over_sound.play()
 
             # Small delay before animation
             for _ in range(30): clock.tick(FPS)
