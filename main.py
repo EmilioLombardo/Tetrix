@@ -485,6 +485,7 @@ def start_game(start_level):
     level_num_text = Text(str(level), number_font, c.WHITE, "left", 5)
 
     paused_text = Text("PAUSED", info_font, c.WHITE, "centre", 4)
+    game_over_text = Text("GAME OVER", info_font, c.RED, "centre", 4)
 
     points_text = Text("POINTS", info_font, c.WHITE, "right", 0)
     points_num_text = Text(str(points), number_font, c.WHITE, "right", 1)
@@ -541,8 +542,10 @@ def start_game(start_level):
     dirty_rects = []
     paused = False
     in_game = True
+    game_over = 0
     while in_game:
 
+        mouse_buttons = pygame.mouse.get_pressed()
         events = pygame.event.get()
         for event in events:
             # Allow user to exit the screen
@@ -554,6 +557,20 @@ def start_game(start_level):
             if (event.type == pygame.KEYDOWN and
                 event.key == pygame.K_ESCAPE):
                 in_game = False
+                break
+
+            # If game is over, press CONFIRM or mouse click to quit to menu
+            if game_over:
+                if (event.type == pygame.KEYDOWN and
+                    event.key in c.CONFIRM_KEYS) or (
+                    event.type == pygame.MOUSEBUTTONUP and
+                    mouse_buttons[0]):
+
+                    c.rot_sound.play(maxtime=100)
+                    in_game = False
+                    break
+
+                continue
 
             if event.type == pygame.KEYDOWN:
                 pygame.mouse.set_visible(False)
@@ -637,6 +654,46 @@ def start_game(start_level):
             menu(start_level)
             break
 
+        # --- Game over screen w/ animation --- #
+        if game_over:
+            if game_over == 2:
+                # If animation has already played, don't play it again
+                continue
+
+            pygame.mouse.set_visible(True)
+            pygame.event.clear()
+
+            # TODO: Add game over sound
+            ### c.game_over_sound.play()
+
+            # Small delay before animation
+            for _ in range(30): clock.tick(FPS)
+
+            # Animation (screen wipe, reveal GAME OVER text)
+            step = c.field_rect.height / 360
+            y = c.field_rect[1] + c.field_rect.height - 1
+            h = int(step)
+            while y > c.field_rect[1]:
+                pygame.event.pump()
+                animation_dirty_rects = []
+
+                animation_dirty_rects.append(
+                        pygame.draw.rect(
+                                screen, c.BLUE_GREY,
+                                (c.field_pos[0], y, c.field_width, h)))
+
+                game_over_text.display(screen, bg)
+
+                pygame.display.update(animation_dirty_rects)
+                y -= step
+                h += step
+
+            for _ in range(30): clock.tick(FPS)
+            pygame.event.clear()
+
+            game_over = 2 # Animation has played
+            continue
+
         if paused:
             continue
 
@@ -710,11 +767,9 @@ def start_game(start_level):
         if tetrimino.lock_timer <= -4:
             # If the tetrimino locks above the playing field; Game over :o
             if max(tetrimino.minos[:,1]) < 0:
-                update_display(dirty_rects)
-                for _ in range(30): clock.tick(FPS)
-                in_game = False
-                menu(start_level)
-                break
+                next_piece.clear(screen, bg)
+                game_over = 1
+                continue
 
             dead_group.add(tetrimino)
             soft_drop = False
@@ -843,11 +898,8 @@ def start_game(start_level):
 
             # If the new piece spawns overlapping any dead minos; Game over :o
             if tetrimino.colliding(dead_group):
-                update_display(dirty_rects)
-                for _ in range(30): clock.tick(FPS)
-                in_game = False
-                menu(start_level)
-                break
+                pygame.display.update(tetrimino.draw(screen))
+                game_over = 1
 
         # --- Time stuff --- #
 
@@ -857,9 +909,10 @@ def start_game(start_level):
         else:
             frame_counter += 1
         clock.tick(FPS)
-        sys.stdout.write(f"        	{points}   \r") ### debug
-        sys.stdout.write(f"    {tetrimino.lock_timer}   \r") ### debug
-        sys.stdout.write(f"{clock.get_rawtime() if clock.get_rawtime() > 16 else ''}\r") ### performance monitoring
+        ### performance monitoring
+        ms_per_frame = (str(clock.get_rawtime())
+                        if clock.get_rawtime() > 16 else "     ")
+        sys.stdout.write(f"{ms_per_frame}\r")
 
 
 menu(0)
