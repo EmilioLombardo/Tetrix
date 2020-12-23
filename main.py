@@ -346,6 +346,7 @@ def menu(selected_lvl):
     level_icons = []
     lvl_range = 20 # One can choose to start on levels 0-19
     lvl_grid_cols = 10
+    if selected_lvl > lvl_range: selected_lvl = 0
 
     for num in range(lvl_range):
         x = (c.width - NumIcon.w * lvl_grid_cols) // 2
@@ -448,6 +449,16 @@ def menu(selected_lvl):
         if not on_menu_screen:
             for _ in range(10): clock.tick(FPS) # Small delay
             c.level_up_sound.play()
+
+            key_mods = pygame.key.get_mods()
+
+            # Hold shift to add 10 to level selection :o
+            if key_mods & pygame.KMOD_SHIFT:
+                selected_lvl = min(selected_lvl + 10, c.max_level)
+            # Hold CTRL to start at lvl 30 :o
+            elif key_mods & pygame.KMOD_CTRL:
+                selected_lvl = c.max_level
+
             start_game(selected_lvl)
 
         clock.tick(FPS)
