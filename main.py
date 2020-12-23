@@ -401,7 +401,7 @@ def menu(selected_lvl):
                         continue
                     # If mouse is on an icon, make that icon selected
                     if selected_lvl != int(icn.num):
-                        c.shift_sound.play(maxtime=60)
+                        c.shift_sound.play()
                         selected_lvl = int(icn.num)
 
             # If mouse button 1 is pressed on an icon
@@ -409,7 +409,7 @@ def menu(selected_lvl):
                 point_in_rect(mouse_pos, level_icons[selected_lvl].rect)):
                 # Start game
                 on_menu_screen = False
-                c.rot_sound.play(maxtime=100)
+                c.rot_sound.play()
 
             if event.type != pygame.KEYDOWN:
                 continue
@@ -417,7 +417,7 @@ def menu(selected_lvl):
             if event.key in c.CONFIRM_KEYS:
                 # Start game
                 on_menu_screen = False
-                c.rot_sound.play(maxtime=100)
+                c.rot_sound.play()
 
             # Allow user to exit the screen
             if event.key == pygame.K_ESCAPE:
@@ -427,19 +427,19 @@ def menu(selected_lvl):
             # --- Level selection control --- #
 
             if event.key in c.RIGHT_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 selected_lvl = (selected_lvl + 1) % lvl_range
 
             if event.key in c.LEFT_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 selected_lvl = (selected_lvl - 1) % lvl_range
 
             if event.key in c.UP_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 selected_lvl = (selected_lvl - lvl_grid_cols) % lvl_range
 
             if event.key in c.DOWN_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 selected_lvl = (selected_lvl + lvl_grid_cols) % lvl_range
 
         level_icons[selected_lvl].selected = True
@@ -577,7 +577,7 @@ def start_game(start_level):
                     event.type == pygame.MOUSEBUTTONUP and
                     mouse_buttons[0]):
 
-                    c.rot_sound.play(maxtime=100)
+                    c.rot_sound.play()
                     in_game = False
                     break
 
@@ -626,7 +626,7 @@ def start_game(start_level):
 
             # --- Shifting on LEFT/RIGHT keypress --- #
             if event.key in c.LEFT_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("left", dead_group)
                 DAS_counter = 0
@@ -635,7 +635,7 @@ def start_game(start_level):
                                          spawn_freeze_timer)
 
             if event.key in c.RIGHT_KEYS:
-                c.shift_sound.play(maxtime=60)
+                c.shift_sound.play()
                 tetrimino.clear(screen, bg)
                 tetrimino.shift("right", dead_group)
                 DAS_counter = 0
@@ -647,7 +647,7 @@ def start_game(start_level):
             if event.key in c.CW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("cw", dead_group)
-                c.rot_sound.play(maxtime=100)
+                c.rot_sound.play()
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                          spawn_freeze_timer)
@@ -655,7 +655,7 @@ def start_game(start_level):
             if event.key in c.CCW_KEYS:
                 tetrimino.clear(screen, bg)
                 tetrimino.rotate("ccw", dead_group)
-                c.rot_sound.play(maxtime=100)
+                c.rot_sound.play()
 
                 spawn_freeze_timer = min(c.frames_per_cell[level],
                                          spawn_freeze_timer)
@@ -730,7 +730,7 @@ def start_game(start_level):
                 DAS_counter = c.DAS - c.ARR
                 if list(prev_pos) != list(tetrimino.centre_pos):
                     # If tetrimino has actually moved, play shift sonud
-                    c.shift_sound.play(maxtime=60)
+                    c.shift_sound.play()
 
         # --- Falling and landing --- #
 
@@ -763,7 +763,7 @@ def start_game(start_level):
 
         # Make tetrimino flash when it locks
         if tetrimino.lock_timer == 0:
-            c.lock_sound.play(maxtime=500)
+            c.lock_sound.play()
             for spr in tetrimino:
                 spr.image.fill(c.WHITE)
 
