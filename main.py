@@ -94,6 +94,19 @@ class Text:
 
         return dirty_rect
 
+    def clear(self, dest_surf, bg_surf):
+        w = self.render.get_width()
+        h = self.render.get_height()
+        pos = self.position(self.column, self.row, w)
+
+        rect = (*pos, w, h)
+
+        dest_surf.set_clip(rect)
+        dest_surf.blit(bg_surf, rect)
+        dest_surf.set_clip()
+
+        return rect
+
 # ------ Class for individual minos (blocks) ------ #
 class Mino(pygame.sprite.DirtySprite):
     w = c.cell_size
