@@ -238,9 +238,10 @@ class Tetrimino(pygame.sprite.RenderUpdates):
             self.minos = prev_minos
             self.centre_pos = prev_centre
             self.update_sprites()
-            return
+            return False
 
         self.update_sprites()
+        return True
 
     def fall(self, dead_minos, level):
 
@@ -724,13 +725,11 @@ def start_game(start_level):
             DAS_counter += 1
             spawn_freeze_timer = 0
             if DAS_counter == c.DAS:
-                prev_pos = tetrimino.centre_pos.copy()
                 tetrimino.clear(screen, bg)
-                tetrimino.shift(dir_held, dead_group)
+                shifted = tetrimino.shift(dir_held, dead_group)
                 DAS_counter = c.DAS - c.ARR
-                if list(prev_pos) != list(tetrimino.centre_pos):
-                    # If tetrimino has actually moved, play shift sonud
-                    c.shift_sound.play()
+                # If tetrimino has actually moved, play shift sonud
+                if shifted: c.shift_sound.play()
 
         # --- Falling and landing --- #
 
