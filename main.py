@@ -489,6 +489,7 @@ def start_game(start_level):
 
     spawn_freeze_timer = max_spawn_freeze
     frame_counter = 1
+    text_flash_counter = 0 # Counter to control timing for flashing text
     DAS_counter = 0 # For control of horisontal auto-shift delays
     level = start_level # Controls falling speed and point bonuses
     lines = 0
@@ -719,7 +720,20 @@ def start_game(start_level):
             game_over = 2 # Animation has played
             continue
 
+        # --- Make level number flash when you level up --- #
+        if text_flash_counter >= 0:
+            if text_flash_counter % 40 == 0: # Show text
+                dirty_rects.append(
+                        level_num_text.display(screen, bg))
+            elif text_flash_counter % 40 == 20: # Hide text
+                dirty_rects.append(
+                        level_num_text.clear(screen, bg))
+            text_flash_counter -= 1
+
         if paused:
+            clock.tick(FPS)
+            pygame.display.update(dirty_rects)
+            dirty_rects = []
             continue
 
         # --- Manage auto-shift --- #
@@ -900,6 +914,9 @@ def start_game(start_level):
                     dirty_rects.append(
                             level_num_text.display(
                                     screen, bg, new_text=str(level)))
+                    level_num_text.clear(screen, bg)
+
+                    text_flash_counter = 60
 
                 # Update points and lines text
                 dirty_rects.append(
