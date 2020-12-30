@@ -9,7 +9,7 @@ import constants as c
 # ------ Class for level icons on level selection screen ------ #
 class NumIcon(pygame.sprite.Sprite):
     w = 60
-    level_font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 40)
+    font = pygame.font.Font("fonts/Montserrat-Bold.ttf", 40)
 
     def __init__(self, num, x, y, selected):
         super().__init__()
@@ -20,7 +20,7 @@ class NumIcon(pygame.sprite.Sprite):
         self.image.fill(c.CYAN)
         self.rect = (x, y, self.w, self.w)
 
-        self.text = self.level_font.render(self.num, True, c.WHITE)
+        self.text = self.font.render(self.num, True, c.WHITE)
         text_w = self.text.get_width()
         text_h = self.text.get_height()
         self.text_rect = ((self.w - text_w)//2, (self.w - text_h)//2)
@@ -29,12 +29,12 @@ class NumIcon(pygame.sprite.Sprite):
 
         if self.selected:
             self.image.fill(c.WHITE)
-            self.text = self.level_font.render(
+            self.text = self.font.render(
                     self.num, True, c.BLUE_GREY)
             self.image.blit(self.text, self.text_rect)
         else:
             self.image.fill(c.BLUE_GREY)
-            self.text = self.level_font.render(
+            self.text = self.font.render(
                     self.num, True, c.WHITE)
             self.image.blit(self.text, self.text_rect)
 
