@@ -41,7 +41,7 @@ class NumIcon(pygame.sprite.Sprite):
 # ------ Class for displaying text ------ #
 class Text:
 
-    def position(cls, column, row, w):
+    def get_pos(cls, column, row, w):
         margin = 40
         left_column_offset = 180
 
@@ -78,7 +78,7 @@ class Text:
             self.render = new_render
             self.text = new_text
 
-        pos = self.position(self.column, self.row, w)
+        pos = self.get_pos(self.column, self.row, w)
 
         h = self.render.get_height()
 
@@ -97,7 +97,7 @@ class Text:
     def clear(self, dest_surf, bg_surf):
         w = self.render.get_width()
         h = self.render.get_height()
-        pos = self.position(self.column, self.row, w)
+        pos = self.get_pos(self.column, self.row, w)
 
         rect = (*pos, w, h)
 
