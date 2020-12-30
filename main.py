@@ -513,7 +513,7 @@ def start_game(start_level):
     paused_text = Text("PAUSED", info_font, c.WHITE, "centre", 4)
     game_over_text = Text("GAME OVER", info_font, c.RED, "centre", 4)
 
-    points_text = Text("POINTS", info_font, c.WHITE, "right", 0)
+    score_text = Text("SCORE", info_font, c.WHITE, "right", 0)
     points_num_text = Text(str(points), number_font, c.WHITE, "right", 1)
 
     next_text = Text("NEXT", info_font, c.WHITE, "right", 4)
@@ -557,7 +557,7 @@ def start_game(start_level):
     lines_num_text.display(screen, bg)
     level_text.display(screen, bg)
     level_num_text.display(screen, bg)
-    points_text.display(screen, bg)
+    score_text.display(screen, bg)
     points_num_text.display(screen, bg)
     next_text.display(screen, bg)
 
