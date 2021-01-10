@@ -40,14 +40,14 @@ CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN]
 PAUSE_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_TAB]
 
 # ------ Sounds ------ #
-rot_sound = pygame.mixer.Sound("sounds/rot_sound.mp3")
-shift_sound = pygame.mixer.Sound("sounds/shift_sound.mp3")
+rot_sound = pygame.mixer.Sound("sounds/rot_sound.wav")
+shift_sound = pygame.mixer.Sound("sounds/shift_sound.wav")
 shift_sound.set_volume(0.8)
-lock_sound = pygame.mixer.Sound("sounds/lock_sound.mp3")
-clear_sound = pygame.mixer.Sound("sounds/clear_sound.mp3")
-tetris_sound = pygame.mixer.Sound("sounds/tetris_sound.mp3")
-level_up_sound = pygame.mixer.Sound("sounds/level_up_sound.mp3")
-game_over_sound = pygame.mixer.Sound("sounds/game_over_sound.mp3")
+lock_sound = pygame.mixer.Sound("sounds/lock_sound.wav")
+clear_sound = pygame.mixer.Sound("sounds/clear_sound.wav")
+tetris_sound = pygame.mixer.Sound("sounds/tetris_sound.wav")
+level_up_sound = pygame.mixer.Sound("sounds/level_up_sound.wav")
+game_over_sound = pygame.mixer.Sound("sounds/game_over_sound.wav")
 
 # ------ Colours ------ #
 
