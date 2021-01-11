@@ -68,7 +68,7 @@ class Text:
 
         self.render = self.font.render(self.text, True, self.colour)
 
-    def display(self, dest_surf, bg_surf, new_text=None):
+    def display(self, dest_surf, bg, new_text=None):
         w = self.render.get_width()
 
         if new_text is not None:
@@ -84,10 +84,18 @@ class Text:
 
         text_rect = (*pos, w, h)
 
-        # Draw bg over text
-        dest_surf.set_clip(text_rect)
-        dest_surf.blit(bg_surf, (0, 0))
-        dest_surf.set_clip()
+        # Draw bg over text (bg can be a pygame surface or a solid colour)
+        if type(bg) is pygame.Surface:
+            bg_surf = bg
+            dest_surf.set_clip(text_rect)
+            dest_surf.blit(bg_surf, (0, 0))
+            dest_surf.set_clip()
+        elif type(bg) in [tuple, list] and len(bg) == 3:
+            bg_colour = bg
+            pygame.draw.rect(dest_surf, bg_colour, text_rect)
+        else:
+            raise Exception("bg argument not valid; "
+                    + "bg must be either a pygame surface or an RGB colour")
 
         # Draw text
         dirty_rect = dest_surf.blit(self.render, pos)
