@@ -52,7 +52,7 @@ class Text:
             "right" : (c.field_pos[0] + c.field_width + margin,
                        c.field_pos[1] + margin + row * margin),
 
-            "centre" : (c.field_pos[0] + (c.field_width - w)/2,
+            "centre" : (c.field_pos[0] + (c.field_width - w)//2,
                         c.field_pos[1] + margin + row * margin)
 
         }[column]
@@ -180,13 +180,23 @@ def randomiser(prev):
 
     return roll # A value 0-6
 
+def point_in_rect(point, rect):
+    x, y = point
+    x1, y1, w, h = rect
+    x2, y2 = x1 + w, y1 + h
+
+    if (x1 < x < x2) and (y1 < y < y2):
+        return True
+
+    return False
+
 # ------ Title screen w/ level select ------ #
 def menu(selected_lvl):
 
     pygame.key.set_repeat(300, 100)
     pygame.mouse.set_visible(True)
 
-    title_text = title_font.render("TETRIX", True, c.WHITE)
+    # --- Level select grid --- #
 
     level_icons = []
     lvl_range = 20 # One can choose to start on levels 0-19
@@ -204,24 +214,20 @@ def menu(selected_lvl):
     lvl_select_group = pygame.sprite.Group()
     lvl_select_group.add(*level_icons)
 
-    def point_in_rect(point, rect):
-        x, y = point
-        x1, y1, w, h = rect
-        x2, y2 = x1 + w, y1 + h
+    # --- Title text --- #
+    title_text = title_font.render("TETRIX", True, c.WHITE)
+    title_pos = ((c.width - title_text.get_width())//2,
+                 c.field_pos[1] + c.cell_size*3 - title_text.get_height()//2)
 
-        if (x1 < x < x2) and (y1 < y < y2):
-            return True
-
-        return False
+    # --- Blit stuff to the screen --- #
+    screen.blit(bg, (0, 0))
+    screen.blit(title_text, title_pos)
+    pygame.display.flip()
 
     def update_display():
         lvl_select_group.update()
         lvl_select_group.draw(screen)
         pygame.display.flip()
-
-    screen.blit(bg, (0, 0))
-    screen.blit(title_text, ((c.width - title_text.get_width())//2, 100))
-    pygame.display.flip()
 
     on_menu_screen = True
     while on_menu_screen:
@@ -767,6 +773,7 @@ def start_game(start_level):
 
             # --- Spawn new tetrimino and next piece --- #
 
+            dirty_rects += next_piece.draw(screen)
             next_piece.clear(screen, bg)
             tetrimino = Tetrimino(next_piece.type_ID, c.spawn_pos)
             next_piece = Tetrimino(randomiser(tetrimino.type_ID),
@@ -786,11 +793,13 @@ def start_game(start_level):
             frame_counter = 0
         else:
             frame_counter += 1
+
         clock.tick(FPS)
-        ### performance monitoring
-        ms_per_frame = (str(clock.get_rawtime())
-                        if clock.get_rawtime() > 16 else "     ")
-        sys.stdout.write(f"{ms_per_frame}\r")
+
+        # Performance monitoring
+        actual_fps = round(clock.get_fps(), 2)
+        perf_info = ":/" if int(actual_fps) > FPS else "  "
+        sys.stdout.write(f"FPS: {actual_fps} {perf_info}   \r")
 
 
 menu(0)
