@@ -148,6 +148,17 @@ bg = bg.convert()
 bg.fill(c.BLUE_GREY)
 draw_field_border(bg, c.GREY)
 
+# Draw grid
+for col in range(c.COLS):
+    x = c.field_pos[0] + col * c.cell_size
+    y1, y2 = c.field_pos[1], c.field_pos[1] + c.field_height - 1
+    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x, y1), (x, y2), width=1)
+
+for row in range(c.ROWS):
+    x1, x2 = c.field_pos[0], c.field_pos[0] + c.field_width - 1
+    y = c.field_pos[1] + row * c.cell_size
+    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x1, y), (x2, y), width=1)
+
 # --- Global timing stuff --- #
 FPS = 60
 clock = pygame.time.Clock()
@@ -428,16 +439,20 @@ def start_game(start_level):
                 event.key in c.PAUSE_KEYS):
                 paused = (False == paused) # Toggle True/False
                 if not paused:
-                    # Erase PAUSED text and redraw dead minos
-                    pygame.draw.rect(screen, c.BLUE_GREY, c.field_rect)
+                    # Redraw dead minos and grid
+                    screen.set_clip(c.field_rect)
+
+                    screen.blit(bg, (0, 0)) # Draw grid
                     dead_group.repaint_rect(screen.get_rect())
                     dead_group.draw(screen)
+
+                    screen.set_clip()
                     pygame.display.update(c.field_rect)
                 else:
                     next_piece.clear(screen, bg)
                     # Draw over the entire field with bg colour
                     pygame.draw.rect(screen, c.BLUE_GREY, c.field_rect)
-                    paused_text.display(screen, bg)
+                    paused_text.display(screen, c.BLUE_GREY)
                     pygame.display.update(c.field_rect)
 
             # --- Register DOWN release for soft drop control --- #
@@ -527,7 +542,7 @@ def start_game(start_level):
                                 screen, c.BLUE_GREY,
                                 (c.field_pos[0], y, c.field_width, h)))
 
-                game_over_text.display(screen, bg)
+                game_over_text.display(screen, c.BLUE_GREY)
 
                 pygame.display.update(animation_dirty_rects)
                 y -= step
@@ -664,11 +679,12 @@ def start_game(start_level):
                     for row_n in rows_to_clear:
                         y = c.field_pos[1] + row_n * c.cell_size
                         rectangle = pygame.Rect(x, y, w, c.cell_size)
-                        animation_dirty_rects.append(
-                                pygame.draw.rect(
-                                        screen,
-                                        c.BLUE_GREY,
-                                        rectangle))
+
+                        # Draw bg over part of the filled row
+                        screen.set_clip(rectangle)
+                        screen.blit(bg, (0, 0))
+
+                        animation_dirty_rects.append(rectangle)
 
                     # Make field border flash if you get a tetris
                     if len(rows_to_clear) != 4:
@@ -690,6 +706,8 @@ def start_game(start_level):
                     i += 1
 
                     clock.tick(FPS)
+
+                screen.set_clip()
 
                 dirty_rects += draw_field_border(screen, c.BLUE_GREY, w=2)
                 draw_field_border(screen, c.GREY)
