@@ -68,7 +68,7 @@ colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
 # ------ Level progression and scoring ------ #
 
-# Falling speeds for different levels
+# Falling speeds for different levels. Index represents level
 frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
                  9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
                  2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -83,7 +83,6 @@ clear_points = [0, 40, 100, 300, 1200]
     # 1 line: 40 points, 2 lines: 300 points etc.
 
 # ------ Spawning, shifting and SRS stuff ------ #
-# https://harddrop.com/wiki/SRS
 
 spawn_pos = array((4, -1))
 
@@ -102,6 +101,8 @@ DAS = 8 # Delayed Auto-Shift (frames)
 ARR = 3 # Auto Repeat Rate (in frames/cell)
 
 # --- SRS offset data --- #
+
+# https://harddrop.com/wiki/SRS
 
 offsets_TJZSL = array((
         (( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0), ( 0, 0)), # 	Rot 0 (spawn)

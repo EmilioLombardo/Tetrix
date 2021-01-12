@@ -73,6 +73,8 @@ class Text:
 
         if new_text is not None:
             new_render = self.font.render(new_text, True, self.colour)
+
+            # Make sure text rect is wide enough to overwrite preexisting text
             w = max(w, new_render.get_width())
 
             self.render = new_render
@@ -98,9 +100,9 @@ class Text:
                     + "bg must be either a pygame surface or an RGB colour")
 
         # Draw text
-        dirty_rect = dest_surf.blit(self.render, pos)
+        dest_surf.blit(self.render, pos)
 
-        return dirty_rect
+        return text_rect
 
     def clear(self, dest_surf, bg_surf):
         w = self.render.get_width()
@@ -109,6 +111,7 @@ class Text:
 
         rect = (*pos, w, h)
 
+        # Draw bg over text
         dest_surf.set_clip(rect)
         dest_surf.blit(bg_surf, rect)
         dest_surf.set_clip()
@@ -335,7 +338,8 @@ def start_game(start_level):
     soft_drop = False # If True, piece falls and locks faster than normal
 
     if c.frames_per_cell[level] > 3:
-        soft_drop_fpc = 2 # Soft drop falling speed in frames per cell
+        # Soft drop falling speed in frames per cell ("fpc")
+        soft_drop_fpc = 2
     else:
         soft_drop_fpc = 1
 
@@ -610,6 +614,7 @@ def start_game(start_level):
 
         # Make tetrimino fall
         if not (tetrimino.lock_timer > 0 and spawn_freeze_timer <= 0):
+            # Don't make tetrimino fall if it has locked or is in spawn freeze
             pass
 
         elif not soft_drop and frame_counter % c.frames_per_cell[level] == 0:
@@ -656,7 +661,7 @@ def start_game(start_level):
 
             rows_to_clear = complete_rows(dead_group)
 
-            if len(rows_to_clear) != 0: # If there are any rows to clear
+            if rows_to_clear: # If there are any rows to clear
                 if len(rows_to_clear) == 4:
                     c.tetris_sound.play()
                 else:

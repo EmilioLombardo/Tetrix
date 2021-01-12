@@ -58,9 +58,10 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         else:
             self.offsets = c.offsets_TJZSL.copy()
 
-        self.rot_index = 0 # Rotation index (0-3 for the four rotations)
+        self.rot_index = 0 # Rotation state (0-3 for the four rotation states)
 
-        self.minos = [] # List with grid coordinate pairs for each mino
+        self.minos = [] # Array with grid coordinate pairs for each mino
+                        # E.g. [[3 -1] [4 -2] [4 -1] [5 -1]] (T-piece at spawn)
 
         for mino_XY in c.tetriminos[self.type_ID]:
             self.minos.append(mino_XY)
@@ -82,7 +83,7 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.update_sprites()
 
     def update_sprites(self):
-
+        # Update position of sprites according to self.minos
         for i in range(len(self.minos)):
             spr = self.sprite_list[i]
             spr.grid_x, spr.grid_y = self.minos[i]
@@ -142,6 +143,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         elif dir == "right":
             self.centre_pos[0] += 1
             self.minos[:,0] += 1
+
+        else:
+            raise Exception("dir argument must be string 'left' or 'right'")
 
         if self.colliding(dead_minos):
             self.minos = prev_minos
