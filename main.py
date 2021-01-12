@@ -692,6 +692,8 @@ def start_game(start_level):
 
                         animation_dirty_rects.append(rectangle)
 
+                    screen.set_clip()
+
                     # Make field border flash if you get a tetris
                     if len(rows_to_clear) != 4:
                         pass
@@ -712,8 +714,6 @@ def start_game(start_level):
                     i += 1
 
                     clock.tick(FPS)
-
-                screen.set_clip()
 
                 dirty_rects += draw_field_border(screen, c.BLUE_GREY, w=2)
                 draw_field_border(screen, c.GREY)
