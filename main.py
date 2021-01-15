@@ -164,15 +164,16 @@ bg.fill(c.BLUE_GREY)
 draw_field_border(bg, c.GREY)
 
 # Draw grid
+line_w = 1
 for col in range(c.COLS):
     x = c.field_pos[0] + col * c.cell_size
     y1, y2 = c.field_pos[1], c.field_pos[1] + c.field_height - 1
-    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x, y1), (x, y2), width=1)
+    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x, y1), (x, y2), line_w)
 
 for row in range(c.ROWS):
     x1, x2 = c.field_pos[0], c.field_pos[0] + c.field_width - 1
     y = c.field_pos[1] + row * c.cell_size
-    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x1, y), (x2, y), width=1)
+    pygame.draw.line(bg, c.LIGHT_BLUE_GREY, (x1, y), (x2, y), line_w)
 
 # --- Global timing stuff --- #
 FPS = 60
