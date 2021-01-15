@@ -8,6 +8,7 @@ class Mino(pygame.sprite.DirtySprite):
     w = c.cell_size
 
     def grid_to_pixel(cls, grid_x, grid_y):
+
         pixel_x = c.cell_size * grid_x + c.field_pos[0]
         pixel_y = c.cell_size * grid_y + c.field_pos[1]
         return pixel_x, pixel_y
@@ -83,6 +84,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.update_sprites()
 
     def update_sprites(self):
+        """
+        Update position of sprites according to self.minos
+        """
         # Update position of sprites according to self.minos
         for i in range(len(self.minos)):
             spr = self.sprite_list[i]
@@ -133,6 +137,10 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.rot_index = prev_rot
 
     def shift(self, dir, dead_minos):
+        """
+        Method to shift tetrimino left and right.
+        """
+
         prev_minos = self.minos.copy()
         prev_centre = self.centre_pos.copy()
 

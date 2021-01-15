@@ -172,8 +172,10 @@ info_font = pygame.font.Font("fonts/Montserrat-BoldItalic.ttf", 30)
 number_font = pygame.font.Font("fonts/Montserrat-Medium.ttf", 30)
 
 def randomiser(prev):
-    # Randomiser with bias against same two pieces in a row
-    # (This is the same randomiser used in NES Tetris)
+    """
+    Randomiser with bias against same two pieces in a row
+    (This is the same randomiser used in NES Tetris)
+    """
 
     roll = random.randint(0, len(c.tetriminos)) # 0-7
 
@@ -184,6 +186,7 @@ def randomiser(prev):
     return roll # A value 0-6
 
 def point_in_rect(point, rect):
+    """Check if point is within rect"""
     x, y = point
     x1, y1, w, h = rect
     x2, y2 = x1 + w, y1 + h
