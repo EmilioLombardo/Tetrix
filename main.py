@@ -1,7 +1,21 @@
 import sys
-import pygame
 import random
 from numpy import array
+try:
+    import pygame
+
+    # ------ Setup ------ #
+    pygame.mixer.pre_init(buffer=32)
+    pygame.init()
+
+except:
+    print("\n! ERROR !\nFant ikke pygame-modulen.\n"
+        + "Hvordan installere pygame:\n\n"
+        + "WINDOWS: pip install pygame\n"
+        + "    MAC: pip3 install pygame\n\n"
+        + "(Bruker du Linux antar jeg du klarer å finne ut av dette selv)")
+
+    sys.exit()
 
 import constants as c
 from tetrimino import *
@@ -37,6 +51,7 @@ class NumIcon(pygame.sprite.Sprite):
             self.text = self.font.render(
                     self.num, True, c.WHITE)
             self.image.blit(self.text, self.text_rect)
+
 
 # ------ Class for displaying text ------ #
 class Text:
@@ -118,9 +133,6 @@ class Text:
 
         return rect
 
-# ------ Setup ------ #
-pygame.mixer.pre_init(buffer=32)
-pygame.init()
 
 # --- Initialise screen --- #
 flags = pygame.DOUBLEBUF #| pygame.FULLSCREEN
