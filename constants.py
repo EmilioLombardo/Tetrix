@@ -6,25 +6,33 @@ display_info = pygame.display.Info()
 
 # ------ Display stuff and playing field dimensions ------ #
 
-# width = display_info.current_w
-# height = display_info.current_h
-width = 750
-height = 750
-print(width, "x", height)
+fullscreen = False
+    ### Might add fullscreen/windowed toggling during runtime in the future.
+    ### For now it'll just be a constant.
+if fullscreen:
+    width = display_info.current_w
+    height = display_info.current_h
+else:
+    width = 750
+    height = width
 
 COLS = 10
 ROWS = 20
-field_width = 300
-field_height = int(ROWS/COLS * field_width)
+field_width = min(width, height) / 2.5
+field_height = ROWS/COLS * field_width
 field_pos = ( # (x, y) for top-left corner of playing field
-    (width // 2) - (field_width // 2),
-    (height // 2) - (field_height // 2)
-    )
-cell_size = field_width // COLS
+    (width - field_width) / 2,
+    (height - field_height) / 2)
+cell_size = field_width / COLS
 field_rect = pygame.Rect(field_pos[0],
                          field_pos[1] - 3 * cell_size,
                          field_width,
                          field_height + 3 * cell_size)
+
+scale = field_width / 300 # Variable used to scale visual elements
+
+print(width, "x", height)
+print(field_width, "x", field_height)
 
 # ------ Controls ------ #
 
@@ -53,30 +61,31 @@ game_over_sound = pygame.mixer.Sound("alt_sounds/game_over_sound.wav")
 
 PURPLE = (180, 40, 140)
 BLUE = (40, 80, 230)
-GREEN = (40, 225, 20)
-YELLOW = (230, 230, 0)
 RED = (230, 0, 0)
+GREEN = (40, 225, 20)
 ORANGE = (240, 150, 10)
+YELLOW = (230, 230, 0)
 CYAN = (0, 200, 230)
-WHITE = (255, 255, 255)
-GREY = (130, 130, 130)
-BLUE_GREY = (17, 28, 36)
-LIGHT_BLUE_GREY = (35, 45, 55)
 
-# What colours to use for the various tetriminos. Index represents piece type
+WHITE = (250, 250, 250)
+GREY = (130, 130, 130)
+BLUE_GREY = (17, 28, 36) # bg colour
+LIGHT_BLUE_GREY = (35, 45, 55) # grid colour
+
+# What colours to use for the various tetriminos. Index represents piece type.
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
 # ------ Level progression and scoring ------ #
 
-# Falling speeds for different levels. Index represents level
+# Falling speeds for different levels. Index represents level.
 frames_per_cell = [52, 48, 44, 40, 36, 32, 27, 21, 16, 10,
-                 9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
-                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                 1]
+                   9, 8, 7, 6, 5, 5, 4, 4, 3, 3,
+                   2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                   1]
 
 max_level = 30
 
-# List of lock delays for different levels
+# List of lock delays for different levels. Index represents level.
 lock_delay = [int(t) for t in linspace(31, 15, 31)]
 
 clear_points = [0, 40, 100, 300, 1200]

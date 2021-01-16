@@ -5,12 +5,41 @@ import constants as c
 
 # ------ Class for individual minos (blocks) ------ #
 class Mino(pygame.sprite.DirtySprite):
-    w = c.cell_size
+    # w = c.cell_size
+    # h = c.cell_size ###
 
-    def grid_to_pixel(cls, grid_x, grid_y):
+    @classmethod
+    def get_size(cls, grid_x, grid_y):
+        """
+        Method that calculates width and height of mino at given
+        position.
+        (This allows for any field width, not just multiples of 10
+        pixels.)
 
-        pixel_x = c.cell_size * grid_x + c.field_pos[0]
-        pixel_y = c.cell_size * grid_y + c.field_pos[1]
+        WHY IS THIS NEEDED?
+        If mino width and height were simply the same as the cell size, there would be graphical problems for field sizes where field_width/COLS is not a whole number. Then cell_size would not a whole number, and certain columns and rows of the grid would then be rendered with slightly different width and/or height due to rounding issues. This would lead to ugly dark lines throughout the stack, between the minos.
+
+        This method makes sure the width and height of the mino matches the one of the column and row it's in, filling any gaps between rows/columns, thus allowing us to have an arbitrary field width, not just multiples of 10.
+        """
+        w = c.cell_size
+        h = c.cell_size
+
+        pixel_x0, pixel_y0 = cls.grid_to_pixel(grid_x, grid_y)
+        pixel_x1, pixel_y1 = cls.grid_to_pixel(grid_x + 1, grid_y + 1)
+        if pixel_x0 + int(c.cell_size) < pixel_x1:
+            w += 1
+
+        if pixel_y0 + int(c.cell_size) < pixel_y1:
+            h += 1
+
+        return w, h
+
+    @staticmethod
+    def grid_to_pixel(grid_x, grid_y):
+        """Converts playfield grid-coords into screen pixel-coords."""
+
+        pixel_x = int(c.cell_size * grid_x + c.field_pos[0])
+        pixel_y = int(c.cell_size * grid_y + c.field_pos[1])
         return pixel_x, pixel_y
 
     def __init__(self, colour, x, y):
@@ -22,18 +51,26 @@ class Mino(pygame.sprite.DirtySprite):
 
         self.colour = colour
 
-        self.image = pygame.Surface((self.w, self.w))
+        self.w, self.h = self.get_size(self.grid_x, self.grid_y)
+
+        self.image = pygame.Surface((self.w, self.h))
         self.image.fill(self.colour)
-        self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.w)
+        self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.h)
 
     def update(self):
-        prev = self.image, self.rect
 
-        self.image.fill(self.colour)
+        prev = self.image, self.rect
 
         self.pixel_x, self.pixel_y = self.grid_to_pixel(self.grid_x,
                                                         self.grid_y)
-        self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.w)
+
+        self.w, self.h = self.get_size(self.grid_x, self.grid_y)
+
+        self.image = pygame.Surface((self.w, self.h))
+        self.image.fill(self.colour)
+
+        self.rect = pygame.Rect(
+                self.pixel_x, self.pixel_y, self.w, self.h)
 
         curr = self.image, self.rect
 
@@ -85,7 +122,7 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
     def update_sprites(self):
         """
-        Update position of sprites according to self.minos
+        Update position of sprites according to self.minos.
         """
         # Update position of sprites according to self.minos
         for i in range(len(self.minos)):
@@ -96,6 +133,10 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         self.update()
 
     def rotate(self, dir, dead_minos):
+        """
+        Method to rotate tetrimino clockwise ("cw") or anti-clockwise ("ccw").
+        Does SRS wall-kicks.
+        """
         prev_rot = self.rot_index
         prev_minos = self.minos.copy()
 
@@ -138,9 +179,8 @@ class Tetrimino(pygame.sprite.RenderUpdates):
 
     def shift(self, dir, dead_minos):
         """
-        Method to shift tetrimino left and right.
+        Method to shift tetrimino left or right. Handles collision.
         """
-
         prev_minos = self.minos.copy()
         prev_centre = self.centre_pos.copy()
 
@@ -165,7 +205,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         return True
 
     def fall(self, dead_minos, level):
-
+        """
+        Method to make tetrimino fall down one row. Handles landing.
+        """
         if not self.landed(dead_minos):
             self.minos[:,1] += 1
             self.centre_pos[1] += 1
@@ -173,6 +215,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
             self.update_sprites()
 
     def colliding(self, dead_minos):
+        """
+        Checks if any minos are overlapping dead minos or are out of bounds.
+        """
         for m in self.minos:
             # Collision with floor
             if m[1] >= c.ROWS:
@@ -190,6 +235,9 @@ class Tetrimino(pygame.sprite.RenderUpdates):
         return False
 
     def landed(self, dead_minos):
+        """
+        Checks if tetrimino has landed (on floor or on dead minos).
+        """
         for m in self.minos:
             # Check if landed on floor
             if m[1] + 1 >= c.ROWS:
