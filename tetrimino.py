@@ -1,12 +1,11 @@
 import pygame
 from numpy import array
+from math import ceil
 
 import constants as c
 
 # ------ Class for individual minos (blocks) ------ #
 class Mino(pygame.sprite.DirtySprite):
-    # w = c.cell_size
-    # h = c.cell_size ###
 
     @classmethod
     def get_size(cls, grid_x, grid_y):
@@ -17,9 +16,18 @@ class Mino(pygame.sprite.DirtySprite):
         pixels.)
 
         WHY IS THIS NEEDED?
-        If mino width and height were simply the same as the cell size, there would be graphical problems for field sizes where field_width/COLS is not a whole number. Then cell_size would not a whole number, and certain columns and rows of the grid would then be rendered with slightly different width and/or height due to rounding issues. This would lead to ugly dark lines throughout the stack, between the minos.
+        If mino width and height were simply the same as the cell size,
+        there would be graphical problems for field sizes where
+        field_width/COLS is not a whole number. Then cell_size would
+        not a whole number, and certain columns and rows of the grid
+        would be rendered with slightly different width and/or height
+        due to rounding issues. This would lead to some ugly dark lines
+        between the minos.
 
-        This method makes sure the width and height of the mino matches the one of the column and row it's in, filling any gaps between rows/columns, thus allowing us to have an arbitrary field width, not just multiples of 10.
+        This method makes sure the width and height of the mino matches
+        the one of the column and row it's in, filling any gaps between
+        rows/columns, thus allowing us to have an arbitrary field width,
+        not just multiples of 10.
         """
         w = c.cell_size
         h = c.cell_size
@@ -52,10 +60,47 @@ class Mino(pygame.sprite.DirtySprite):
         self.colour = colour
 
         self.w, self.h = self.get_size(self.grid_x, self.grid_y)
-
         self.image = pygame.Surface((self.w, self.h))
-        self.image.fill(self.colour)
+        self.draw_mino()
+
         self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.w, self.h)
+
+    def draw_mino(self):
+        border_col = c.LIGHT_BLUE_GREY
+        hl_col = c.lighten(self.colour)
+
+        self.image.fill(self.colour)
+
+        # Point pairs for top, left, bottom and right sides
+        point_pairs = lambda x0, y0, x1, y1: (
+                ((x0, y0), (x1, y0)), # Top
+                ((x0, y0), (x0, y1)), # Left
+                ((x0, y1), (x1 + 1, y1)), # Bottom
+                ((x1, y0), (x1, y1 + 1))) # Right
+
+        # Dark border on all sides
+        border_w = round(c.scale) # 1
+        x0 = 0
+        y0 = 0
+        x1 = round(self.w - c.scale)
+        y1 = round(self.h - c.scale)
+
+        for line in point_pairs(x0, y0, x1, y1)[2:]:
+            pygame.draw.line(self.image, border_col, *line, border_w)
+
+
+        # Light border on top and left sides
+        border_w = ceil(4 * c.scale) # 3
+        x0 = border_w//2 - 1
+        y0 = border_w//2 - 1
+        x1 = int(self.w - 2 * c.scale)
+        y1 = int(self.h - 2 * c.scale)
+
+        for line in point_pairs(x0, y0, x1, y1)[:2]:
+            pygame.draw.line(self.image, hl_col, *line, border_w)
+
+        pygame.draw.rect(
+                self.image, border_col, (0, 0, round(c.scale), round(c.scale)))
 
     def update(self):
 
@@ -67,7 +112,7 @@ class Mino(pygame.sprite.DirtySprite):
         self.w, self.h = self.get_size(self.grid_x, self.grid_y)
 
         self.image = pygame.Surface((self.w, self.h))
-        self.image.fill(self.colour)
+        self.draw_mino()
 
         self.rect = pygame.Rect(
                 self.pixel_x, self.pixel_y, self.w, self.h)

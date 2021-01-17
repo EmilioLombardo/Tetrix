@@ -30,9 +30,7 @@ field_rect = pygame.Rect(field_pos[0],
                          field_height + 3 * cell_size)
 
 scale = field_width / 300 # Variable used to scale visual elements
-
 print(width, "x", height)
-print(field_width, "x", field_height)
 
 # ------ Controls ------ #
 
@@ -67,13 +65,26 @@ ORANGE = (240, 150, 10)
 YELLOW = (230, 230, 0)
 CYAN = (0, 200, 230)
 
-WHITE = (250, 250, 250)
-GREY = (130, 130, 130)
-BLUE_GREY = (17, 28, 36) # bg colour
-LIGHT_BLUE_GREY = (35, 45, 55) # grid colour
+WHITE = (250, 250, 250) # Text colour
+GREY = (130, 130, 130) # Field border colour
+BLUE_GREY = (17, 28, 36) # BG colour
+LIGHT_BLUE_GREY = (35, 45, 55) # Grid colour
 
 # What colours to use for the various tetriminos. Index represents piece type.
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
+
+def lighten(colour_list, increase=25):
+    """Takes an RGB colour and increases the HSL lightness."""
+
+    # Get hsla-values for colour
+    colour = pygame.Color(*colour_list)
+    h, s, l, a = colour.hsla
+
+    # Increase lightness
+    colour.hsla = (h, s, min(l + increase, 100), a)
+
+    # Return RGB tuple for lightened colour
+    return (colour.r, colour.g, colour.b)
 
 # ------ Level progression and scoring ------ #
 
@@ -104,7 +115,7 @@ tetriminos = (
         ((-1, 0), (0, 0), (1, 0), (1, -1)), # 	ID 4: L
         ((0, -1), (1, -1), (0, 0), (1, 0)), # 	ID 5: O
         ((-1, 0), (0, 0), (1, 0), (2, 0)) # 	ID 6: I
-)
+        )
 
 DAS = 8 # Delayed Auto-Shift (frames)
 ARR = 3 # Auto Repeat Rate (in frames/cell)

@@ -725,13 +725,14 @@ def start_game(start_level):
         if tetrimino.lock_timer == 0:
             c.lock_sound.play()
             for spr in tetrimino:
-                spr.image.fill(c.WHITE)
+                spr.colour = c.WHITE
+                spr.update()
 
         elif tetrimino.lock_timer <= -3:
             for spr in tetrimino:
-                spr.image.fill(spr.colour)
+                spr.colour = c.colours[tetrimino.type_ID]
+                spr.update()
 
-        # --- Update display --- #
         update_display(dirty_rects)
         dirty_rects = []
 
@@ -902,6 +903,5 @@ def start_game(start_level):
         actual_fps = round(clock.get_fps(), 2)
         perf_info = ":/" if int(actual_fps) > FPS else "  "
         sys.stdout.write(f"FPS: {actual_fps} {perf_info}   \r")
-
 
 menu(0)
