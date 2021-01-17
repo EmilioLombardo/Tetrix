@@ -39,21 +39,21 @@ DOWN_KEYS = [pygame.K_DOWN, pygame.K_s]
 LEFT_KEYS = [pygame.K_LEFT, pygame.K_a]
 RIGHT_KEYS = [pygame.K_RIGHT, pygame.K_d]
 
-CW_KEYS = [pygame.K_UP, pygame.K_w, pygame.K_k, pygame.K_x, pygame.K_PERIOD]
-CCW_KEYS = [pygame.K_j, pygame.K_z, pygame.K_COMMA]
+CW_KEYS = [pygame.K_UP, pygame.K_w, pygame.K_k, pygame.K_x]
+CCW_KEYS = [pygame.K_j, pygame.K_z]
 
 CONFIRM_KEYS = [pygame.K_SPACE, pygame.K_RETURN]
 PAUSE_KEYS = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_TAB]
 
 # ------ Sounds ------ #
-rot_sound = pygame.mixer.Sound("alt_sounds/rot_sound.wav")
-shift_sound = pygame.mixer.Sound("alt_sounds/shift_sound.wav")
+rot_sound = pygame.mixer.Sound("sounds/rot_sound.wav")
+shift_sound = pygame.mixer.Sound("sounds/shift_sound.wav")
 shift_sound.set_volume(0.8)
-lock_sound = pygame.mixer.Sound("alt_sounds/lock_sound.wav")
-clear_sound = pygame.mixer.Sound("alt_sounds/clear_sound.wav")
-tetris_sound = pygame.mixer.Sound("alt_sounds/tetris_sound.wav")
-level_up_sound = pygame.mixer.Sound("alt_sounds/level_up_sound.wav")
-game_over_sound = pygame.mixer.Sound("alt_sounds/game_over_sound.wav")
+lock_sound = pygame.mixer.Sound("sounds/lock_sound.wav")
+clear_sound = pygame.mixer.Sound("sounds/clear_sound.wav")
+tetris_sound = pygame.mixer.Sound("sounds/tetris_sound.wav")
+level_up_sound = pygame.mixer.Sound("sounds/level_up_sound.wav")
+game_over_sound = pygame.mixer.Sound("sounds/game_over_sound.wav")
 
 # ------ Colours ------ #
 
