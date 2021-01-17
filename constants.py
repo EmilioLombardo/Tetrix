@@ -74,7 +74,10 @@ LIGHT_BLUE_GREY = (35, 45, 55) # Grid colour
 colours = (PURPLE, BLUE, RED, GREEN, ORANGE, YELLOW, CYAN)
 
 def lighten(colour_list, increase=25):
-    """Takes an RGB colour and increases the HSL lightness."""
+    """
+    Takes an RGB colour and increases the HSL lightness.
+    Returns new RGB colour.
+    """
 
     # Get hsla-values for colour
     colour = pygame.Color(*colour_list)
