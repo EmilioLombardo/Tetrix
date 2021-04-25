@@ -19,7 +19,7 @@ class Mino(pygame.sprite.DirtySprite):
         If mino width and height were simply the same as the cell size,
         there would be graphical problems for field sizes where
         field_width/COLS is not a whole number. Then cell_size would
-        not a whole number, and certain columns and rows of the grid
+        not be a whole number, and certain columns and rows of the grid
         would be rendered with slightly different width and/or height
         due to rounding issues. This would lead to some ugly dark lines
         between the minos.
@@ -28,6 +28,8 @@ class Mino(pygame.sprite.DirtySprite):
         the one of the column and row it's in, filling any gaps between
         rows/columns, thus allowing us to have an arbitrary field width,
         not just multiples of 10.
+
+        Just trust me lol
         """
         w = c.cell_size
         h = c.cell_size
